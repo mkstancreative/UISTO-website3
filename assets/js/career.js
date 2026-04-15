@@ -1,4 +1,5 @@
-const JOBS_API_URL = "http://192.168.1.37:5000/api/v1/";
+// const JOBS_API_URL = "http://192.168.1.37:5000/api/v1/";
+const JOBS_API_URL = "https://career.uisto.edu.ng/api/v1/";
 
 /* ── Job Data State ───────────────────────────────────── */
 let uistoJobs = [];        // all jobs from API

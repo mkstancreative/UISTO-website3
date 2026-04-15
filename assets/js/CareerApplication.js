@@ -1,5 +1,5 @@
 
-const APP_API_URL = "http://192.168.1.37:5000/api/v1/";
+const APP_API_URL = "https://career.uisto.edu.ng/api/v1/";
 const COUNTRIES_API = "https://countriesnow.space/api/v0.1";
 
 /* ── Role Type State ─────────────────────────────────── */
