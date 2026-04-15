@@ -107,12 +107,21 @@
                 Closing: <strong>2 weeks from publication</strong>
               </div>
             </div>
-            <button class="uisto-apply-trigger" id="career-apply-btn" onclick="openApplyModal()">
-              Apply Now
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
+            <div class="uisto-career-actions">
+              <button class="uisto-apply-trigger" id="career-apply-btn" onclick="openApplyModal()">
+                Apply Now
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button class="uisto-status-trigger" id="check-status-btn" onclick="openStatusModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                  <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Check Application Status
+              </button>
+            </div>
           </div>
 
           <!-- RIGHT: Position Cards -->
@@ -186,6 +195,41 @@
       </section>
     </main>
     <footer class="section-footer"></footer>
+  </div>
+
+  <!-- ══ STATUS CHECK MODAL ══════════════════════════════ -->
+  <div class="apply-overlay" id="status-overlay">
+    <div class="apply-modal status-modal">
+      <button class="apply-close" onclick="closeStatusModal()" aria-label="Close">✕</button>
+
+      <div class="apply-modal-head">
+        <h2 class="apply-modal-title">Application Status</h2>
+        <p class="apply-position-label">Enter your Application ID and email address to track your application.</p>
+      </div>
+
+      <div class="status-modal-body">
+        <div class="status-form-wrap">
+          <div class="apply-field">
+            <label for="status-app-id">Application ID <span class="req-star">*</span></label>
+            <input type="text" id="status-app-id" placeholder="e.g. UIST/2026/001" autocomplete="off" />
+          </div>
+          <div class="apply-field">
+            <label for="status-email">Email Address <span class="req-star">*</span></label>
+            <input type="email" id="status-email" placeholder="e.g. you@example.com" autocomplete="email" />
+          </div>
+          <button type="button" class="status-check-btn" id="status-check-btn" onclick="checkApplicationStatus()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Check Status
+          </button>
+        </div>
+
+        <!-- Result area -->
+        <div class="status-result" id="status-result" style="display:none"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ══ APPLICATION MODAL ════════════════════════════════ -->

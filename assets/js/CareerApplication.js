@@ -125,6 +125,99 @@ function closeApplyModal() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   STATUS MODAL
+   ══════════════════════════════════════════════════════════════ */
+function openStatusModal() {
+    document.getElementById("status-app-id").value = "";
+    document.getElementById("status-email").value = "";
+    document.getElementById("status-result").style.display = "none";
+    document.getElementById("status-overlay").classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeStatusModal() {
+    document.getElementById("status-overlay").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+async function checkApplicationStatus() {
+    const appId = document.getElementById("status-app-id").value.trim();
+    const email = document.getElementById("status-email").value.trim();
+    const resultDiv = document.getElementById("status-result");
+    const btn = document.getElementById("status-check-btn");
+
+    if (!appId || !email) {
+        showToast("Please enter both Application ID and Email.", "warning");
+        return;
+    }
+
+    // Set loading state
+    btn.innerHTML = `<span class="btn-spinner"></span> Checking...`;
+    btn.disabled = true;
+    resultDiv.style.display = "none";
+
+    try {
+        const res = await fetch(`${APP_API_URL}applications/status/${encodeURIComponent(appId)}?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            // Success - show result card
+            const resultData = data.data;
+            const subdate = new Date(resultData.appliedAt).toLocaleDateString("en-GB", {
+                day: "numeric", month: "short", year: "numeric"
+            });
+            
+            const positionTitle = resultData.job?.position?.title || "Position applied for";
+            
+            // Prefer the shortlisting status if available, fallback to the base status
+            const mainStatus = resultData.status || "Pending";
+            const badgeClass = "status-" + mainStatus.toLowerCase();
+
+            resultDiv.innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="result-role">${positionTitle}</span>
+                        <span class="result-badge ${badgeClass}">${mainStatus}</span>
+                    </div>
+                    <div class="result-meta">
+                        <div><strong>Application ID:</strong> ${resultData.applicationId}</div>
+                        <div><strong>Submitted on:</strong> ${subdate}</div>
+                    </div>
+                    ${mainStatus === "Shortlisted" ? `
+                    <div class="result-message result-msg-success">
+                        Congratulations! You have been shortlisted. Please check your email for the next steps.
+                    </div>` : ""}
+                    ${mainStatus === "Pending" || mainStatus === "Submitted" ? `
+                    <div class="result-message result-msg-info">
+                        Your application has been received and is currently under review.
+                    </div>` : ""}
+                     ${mainStatus === "Rejected" ? `
+                    <div class="result-message result-msg-error">
+                        Unfortunately, your application was not successful at this time.
+                    </div>` : ""}
+                </div>
+            `;
+            resultDiv.style.display = "block";
+        } else {
+            showToast(data.message || "Application not found. Please check your details.", "error");
+        }
+    } catch (err) {
+        console.error("Status check error:", err);
+        showToast("Network error. Please try again later.", "error");
+    } finally {
+        // Reset button
+        btn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Check Status
+        `;
+        btn.disabled = false;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
    ICT FIELDS TOGGLE
    ══════════════════════════════════════════════════════════════ */
 function toggleIctFields(checkbox) {

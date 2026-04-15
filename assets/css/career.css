@@ -1160,3 +1160,165 @@
   font-size: 11.5px;
   color: #3a5068;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   APPLICATION STATUS MODAL & TRIGGERS
+   ═══════════════════════════════════════════════════════════════ */
+
+.uisto-status-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #1e3a5f;
+  border: 1px solid #1e3a5f;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.uisto-status-trigger:hover {
+  background: rgba(30, 58, 95, 0.05);
+}
+
+.uisto-career-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+@media (max-width: 640px) {
+  .uisto-career-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .uisto-status-trigger {
+    justify-content: center;
+  }
+}
+
+.status-modal {
+  max-width: 500px;
+}
+
+.status-modal-body {
+  padding: 24px 30px 30px;
+}
+
+.status-form-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.status-check-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  background: #1e3a5f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.status-check-btn:hover {
+  background: #152c4a;
+}
+
+.status-check-btn:disabled {
+  background: #aab8c8;
+  cursor: not-allowed;
+}
+
+/* Spinner for the check status button */
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Result Card */
+.status-result {
+  margin-top: 24px;
+  animation: fadeSlideIn 0.3s ease;
+}
+
+.result-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.result-role {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a2e42;
+}
+
+.result-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-shortlisted { background: #dcfce7; color: #166534; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+
+.result-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+.result-meta strong {
+  color: #1a2e42;
+  font-weight: 600;
+}
+
+.result-message {
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.result-msg-info { background: #eff6ff; color: #1e40af; border-left: 3px solid #3b82f6; }
+.result-msg-success { background: #f0fdf4; color: #15803d; border-left: 3px solid #22c55e; }
+.result-msg-error { background: #fef2f2; color: #b91c1c; border-left: 3px solid #ef4444; }
