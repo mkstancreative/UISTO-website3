@@ -1,17 +1,11 @@
-/* ═══════════════════════════════════════════════════════════════
-   CareerApplication.js  —  3-step job application form
-   API: POST https://career.uisto.edu.ng/api/v1/applications/apply
-   FormData fields (confirmed via Postman):
-     jobId, personalInfo, qualifications, experience,
-     professionalInfo, referees, coverLetter, resume, supportingDocument
-   ═══════════════════════════════════════════════════════════════ */
 
-const APP_API_URL = "https://career.uisto.edu.ng/api/v1/";
+const APP_API_URL = "http://192.168.1.37:5000/api/v1/";
 const COUNTRIES_API = "https://countriesnow.space/api/v0.1";
 
-/* ══════════════════════════════════════════════════════════════
-   TOAST
-   ══════════════════════════════════════════════════════════════ */
+/* ── Role Type State ─────────────────────────────────── */
+let currentRoleType = "academic"; // "academic" | "non-academic"
+
+
 function showToast(message, type = "info") {
     let container = document.getElementById("toast-container");
     if (!container) {
@@ -108,12 +102,19 @@ async function onStateChange() {
    MODAL OPEN / CLOSE
    ══════════════════════════════════════════════════════════════ */
 function openApplyModal() {
-    if (!activeJobId) { showToast("Please select a job first.", "warning"); return; }
     document.getElementById("career-apply-form")?.reset();
+    // hide preview card on fresh open
+    const card = document.getElementById("job-preview-card");
+    if (card) card.style.display = "none";
+    // hide ICT detail fields until checkbox is checked
+    const ictWrap = document.getElementById("ict-fields-wrap");
+    if (ictWrap) ictWrap.style.display = "none";
     _goto(1);
     clearAllErrors();
     resetFileLabels();
+    setRoleType("academic"); // default to academic on open
     loadNigerianStates();
+    if (typeof loadJobSelector === "function") loadJobSelector();
     document.getElementById("apply-overlay").classList.add("active");
     document.body.style.overflow = "hidden";
 }
@@ -121,6 +122,56 @@ function openApplyModal() {
 function closeApplyModal() {
     document.getElementById("apply-overlay").classList.remove("active");
     document.body.style.overflow = "";
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ICT FIELDS TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+function toggleIctFields(checkbox) {
+    const wrap = document.getElementById("ict-fields-wrap");
+    if (!wrap) return;
+    if (checkbox.checked) {
+        wrap.style.display = "grid";
+        // Animate in
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+        requestAnimationFrame(() => {
+            wrap.style.opacity = "1";
+            wrap.style.transform = "translateY(0)";
+        });
+    } else {
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        setTimeout(() => { wrap.style.display = "none"; }, 220);
+        // Clear values when hidden
+        document.getElementById("apply-computer-skills").value = "";
+        document.getElementById("apply-prof-certs").value = "";
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ROLE TYPE TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+function setRoleType(type) {
+    currentRoleType = type;
+
+    // Update tab UI
+    document.querySelectorAll(".role-tab").forEach(t => t.classList.remove("active"));
+    document.getElementById(`role-tab-${type}`)?.classList.add("active");
+
+    // Show/hide academic-only fields
+    document.querySelectorAll(".academic-only").forEach(el => {
+        el.classList.toggle("hidden", type !== "academic");
+    });
+
+    // Update position label in modal header
+    const lbl = document.getElementById("apply-position-label");
+    if (lbl) {
+        lbl.textContent = type === "academic"
+            ? "Academic Staff Position"
+            : "Non-Academic Staff Position";
+    }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -211,19 +262,34 @@ function _validateStep1() {
 
 function _validateStep2() {
     const errs = [];
+    const isAcademic = currentRoleType === "academic";
+
+    // Common required fields
     _req("apply-degree-type", "Degree type", errs);
-    _req("apply-degree-class", "Degree class", errs);
     _req("apply-institution", "Institution", errs);
-    _req("apply-year-awarded", "Year awarded", errs);
-    _req("apply-years-post-qual", "Years post-qualification", errs);
     _req("apply-referee-name", "Referee name", errs);
     _req("apply-referee-email", "Referee email", errs);
+
+    // Academic-only required fields
+    if (isAcademic) {
+        _req("apply-degree-class", "Degree class", errs);
+        _req("apply-year-awarded", "Year awarded", errs);
+    }
+
     const rEmail = document.getElementById("apply-referee-email");
     if (rEmail?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rEmail.value)) {
         _showErr("apply-referee-email", "Enter a valid referee email."); errs.push("apply-referee-email");
     }
     if (errs.length) showToast("Please complete qualifications, experience, and referee details.", "warning");
     return errs.length === 0;
+}
+
+function _validateRoleType() {
+    if (!currentRoleType) {
+        showToast("Please select a position type (Academic or Non-Academic).", "warning");
+        return false;
+    }
+    return true;
 }
 
 function _validateStep3() {
@@ -237,10 +303,16 @@ function _validateStep3() {
    ══════════════════════════════════════════════════════════════ */
 async function submitApplication(e) {
     e.preventDefault();
+    if (!_validateRoleType()) return;
     if (!_validateStep3()) return;
 
     const jobId = document.getElementById("apply-position-id")?.value?.trim();
-    if (!jobId) { showToast("Job ID missing. Close and reopen the job listing.", "error"); return; }
+    if (!jobId) {
+        showToast("Please select a position from the dropdown on Step 1.", "warning");
+        _goto(1);
+        document.getElementById("apply-job-select")?.focus();
+        return;
+    }
 
     /* ── personalInfo ── */
     const personalInfo = {
@@ -263,13 +335,19 @@ async function submitApplication(e) {
     };
 
     /* ── experience ── */
-    const experience = {
-        yearsPostQualification: parseInt(document.getElementById("apply-years-post-qual").value, 10) || 0,
-        teachingYears: parseInt(document.getElementById("apply-teaching-years")?.value, 10) || 0,
-        researchYears: parseInt(document.getElementById("apply-research-years")?.value, 10) || 0,
-        industryYears: parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
-        scholarlyPublications: parseInt(document.getElementById("apply-publications")?.value, 10) || 0,
-    };
+    const isAcademic = currentRoleType === "academic";
+    const experience = isAcademic
+        ? {
+            // Academic: full experience set
+            teachingYears:  parseInt(document.getElementById("apply-teaching-years")?.value, 10) || 0,
+            researchYears:  parseInt(document.getElementById("apply-research-years")?.value, 10) || 0,
+            industryYears:  parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
+            publications:   parseInt(document.getElementById("apply-publications")?.value, 10) || 0,
+        }
+        : {
+            // Non-Academic: industry years only
+            industryYears: parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
+        };
 
     /* ── professionalInfo ── */
     const ictChecked = document.getElementById("apply-ict-proficiency")?.checked || false;
@@ -293,6 +371,7 @@ async function submitApplication(e) {
     /* ── Build FormData (exact Postman field names) ── */
     const fd = new FormData();
     fd.append("jobId", jobId);
+    fd.append("roleType", currentRoleType);
     fd.append("personalInfo", JSON.stringify(personalInfo));
     fd.append("qualifications", JSON.stringify(qualifications));
     fd.append("experience", JSON.stringify(experience));

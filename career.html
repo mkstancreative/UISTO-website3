@@ -54,88 +54,7 @@
     rel="apple-touch-icon" />
   <link rel="stylesheet" href="./assets/css/career.css" />
   <style>
-    .careers-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .search-bar input {
-      padding: 0.75rem 1.25rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      width: 300px;
-      max-width: 100%;
-    }
-
-    .pagination-bar {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-    }
-
-    .pagination-btn {
-      padding: 0.5rem 1rem;
-      border: 1px solid #0056b3;
-      background: white;
-      color: #0056b3;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .pagination-btn.active {
-      background: #0056b3;
-      color: white;
-    }
-
-    .pagination-btn:disabled {
-      border-color: #ccc;
-      color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .pagination-btn:hover:not(:disabled):not(.active) {
-      background: #f0f8ff;
-    }
-
-    /* ── Category Filter Pills ── */
-    #uisto-filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .filter-pill {
-      padding: 6px 16px;
-      border: 1.5px solid #c8d4e0;
-      background: #fff;
-      color: #1e3a5f;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      white-space: nowrap;
-    }
-
-    .filter-pill:hover {
-      border-color: #0056b3;
-      color: #0056b3;
-      background: #f0f8ff;
-    }
-
-    .filter-pill.active {
-      background: #0056b3;
-      border-color: #0056b3;
-      color: #fff;
-    }
+    .academic-only.hidden { display: none !important; }
   </style>
 </head>
 
@@ -165,44 +84,56 @@
           </div>
         </div>
       </section>
-      <!-- CAREERS POSITIONS SECTION -->
-      <section class="page-section">
-        <div class="careers-wrap">
-          <div class="careers-controls" style="flex-direction:column;align-items:stretch;">
-            <!-- SEARCH BAR -->
-            <div class="search-bar">
-              <input type="text" id="uisto-search" placeholder="Search careers by title or keyword..."
-                oninput="handleSearch()" />
+      <!-- ── CAREER OPPORTUNITY SECTION ── -->
+      <section class="uisto-career-section">
+        <div class="uisto-career-inner">
+
+          <!-- LEFT: Text & CTA -->
+          <div class="uisto-career-content">
+            <span class="uisto-career-chip">Now Recruiting</span>
+            <h2 class="uisto-career-h2">Build Your Future at UISTO</h2>
+            <p class="uisto-career-p">
+              The University of Innovation, Science and Technology, Omuma invites applications
+              from suitably qualified professionals to join our academic and administrative teams.
+              Be part of a forward-thinking institution shaping Nigeria's future.
+            </p>
+            <div class="uisto-career-badges">
+              <div class="uisto-career-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#c9a84c"/></svg>
+                Omuma, Imo State
+              </div>
+              <div class="uisto-career-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#c9a84c" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/></svg>
+                Closing: <strong>2 weeks from publication</strong>
+              </div>
             </div>
-            <!-- CATEGORY FILTER PILLS -->
-            <div class="filter-bar" id="uisto-filters"></div>
+            <button class="uisto-apply-trigger" id="career-apply-btn" onclick="openApplyModal()">
+              Apply Now
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
 
-          <!-- COUNT -->
-          <div class="count-bar" id="uisto-count"></div>
-
-          <!-- JOB CARDS GRID -->
-          <div class="jobs-grid" id="uisto-grid"></div>
-
-          <!-- PAGINATION -->
-          <div class="pagination-bar" id="uisto-pagination"></div>
-
-          <hr class="careers-divider" />
-
-          <!-- SINGLE CTA -->
-          <!-- <div class="cta-bar">
-            <p class="cta-note">
-              Submit your application letter, detailed CV, and supporting
-              documents <strong>Closing: 2 weeks from date of publication.</strong>
-            </p>
-            <a href="/application-portal" class="cta-apply-btn">
-              Apply Now
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </a>
-          </div> -->
+          <!-- RIGHT: Position Cards -->
+          <div class="uisto-career-positions">
+            <div class="uisto-pos-card">
+              <div class="uisto-pos-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 9l10 6 10-6-10-6z" stroke="#1e3a5f" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 6 10-6M2 13l10 6 10-6" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <h4>Academic Positions</h4>
+              <p>Lecturers, Senior Lecturers, Readers, and Professors across all faculties and departments.</p>
+              <span class="uisto-pos-tag">Multiple Openings</span>
+            </div>
+            <div class="uisto-pos-card">
+              <div class="uisto-pos-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#1e3a5f" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#1e3a5f" stroke-width="2"/></svg>
+              </div>
+              <h4>Non-Academic Positions</h4>
+              <p>Administrative, technical, library, legal, and support staff roles across all units.</p>
+              <span class="uisto-pos-tag">Multiple Openings</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -256,52 +187,6 @@
     </main>
     <footer class="section-footer"></footer>
   </div>
-  <!-- ══ JOB DETAIL MODAL ══════════════════════════════════ -->
-  <div class="jd-overlay" id="job-detail-overlay">
-    <div class="jd-panel">
-      <button class="jd-close" onclick="closeJobDetail()" aria-label="Close">✕</button>
-
-      <div class="jd-head">
-        <span class="jd-badge badge" id="jd-badge"></span>
-        <h2 class="jd-title" id="jd-title"></h2>
-        <div class="jd-meta">
-          <span class="jd-meta-pill" id="jd-type"></span>
-          <span class="jd-meta-pill" id="jd-level"></span>
-        </div>
-      </div>
-
-      <div class="jd-body">
-        <div class="jd-section">
-          <h3 class="jd-section-title">Minimum Qualifications</h3>
-          <p id="jd-qualifications" class="jd-section-text"></p>
-        </div>
-        <div class="jd-section">
-          <h3 class="jd-section-title">Key Responsibilities</h3>
-          <ul id="jd-responsibilities" class="jd-bullets"></ul>
-        </div>
-        <div class="jd-section">
-          <h3 class="jd-section-title">Required Documents</h3>
-          <ul class="jd-bullets">
-            <li>Updated Curriculum Vitae (PDF)</li>
-            <li>Cover Letter / Application Letter (PDF)</li>
-            <li>Copies of academic credentials and certificates</li>
-            <li>Any other relevant supporting documents</li>
-          </ul>
-        </div>
-        <p class="jd-closing-note">Closing Date: <strong>Two (2) weeks from date of publication.</strong></p>
-      </div>
-
-      <div class="jd-footer">
-        <button class="jd-apply-btn" onclick="openApplyModal()">
-          Apply Now
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- ══ APPLICATION MODAL ════════════════════════════════ -->
   <div class="apply-overlay" id="apply-overlay">
@@ -332,6 +217,52 @@
 
         <!-- ── STEP 1: Personal Info ── -->
         <div class="apply-step" id="apply-step-1">
+
+          <!-- Role Type Selector -->
+          <div class="role-selector-wrap">
+            <p class="role-selector-lbl">I am applying for:</p>
+            <div class="role-selector-tabs" role="group" aria-label="Position type">
+              <button type="button" class="role-tab active" id="role-tab-academic" onclick="setRoleType('academic')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 9l10 6 10-6-10-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 6 10-6M2 13l10 6 10-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="role-tab-text">
+                  <span class="role-tab-name">Academic Staff</span>
+                  <small class="role-tab-sub">Lecturers, Professors &amp; Researchers</small>
+                </div>
+              </button>
+              <button type="button" class="role-tab" id="role-tab-non-academic" onclick="setRoleType('non-academic')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="2"/></svg>
+                <div class="role-tab-text">
+                  <span class="role-tab-name">Non-Academic Staff</span>
+                  <small class="role-tab-sub">Administrative &amp; Technical Staff</small>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Job Position Selector -->
+          <div class="job-selector-wrap">
+            <div class="apply-field apply-field--full">
+              <label for="apply-job-select">Select Position <span class="req-star">*</span></label>
+              <select id="apply-job-select" onchange="onJobSelect(this.value)">
+                <option value="">-- Select a position to apply for --</option>
+              </select>
+            </div>
+            <!-- Selected job preview card -->
+            <div class="job-preview-card" id="job-preview-card" style="display:none">
+              <div class="job-preview-top">
+                <div class="job-preview-info">
+                  <span class="job-preview-title" id="job-preview-title"></span>
+                  <span class="job-preview-dept" id="job-preview-dept"></span>
+                </div>
+                <span class="job-preview-badge" id="job-preview-cadre"></span>
+              </div>
+              <div class="job-preview-meta">
+                <span id="job-preview-deadline"></span>
+                <!-- <span id="job-preview-reqs"></span> -->
+              </div>
+            </div>
+          </div>
+
           <div class="apply-form-grid">
 
             <div class="apply-field">
@@ -434,7 +365,7 @@
               </select>
             </div>
 
-            <div class="apply-field">
+            <div class="apply-field academic-only" id="field-degree-class">
               <label for="apply-degree-class">Degree Class <span class="req-star">*</span></label>
               <select id="apply-degree-class">
                 <option value="">Select</option>
@@ -453,7 +384,7 @@
               <input type="text" id="apply-institution" placeholder="e.g. University of Lagos" />
             </div>
 
-            <div class="apply-field">
+            <div class="apply-field academic-only" id="field-year-awarded">
               <label for="apply-year-awarded">Year Awarded <span class="req-star">*</span></label>
               <input type="number" id="apply-year-awarded" placeholder="e.g. 2018" min="1950" max="2030" />
             </div>
@@ -462,24 +393,20 @@
               style="font-weight:600;color:#1e3a5f;margin:10px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.05em">
               Experience (years)</p>
 
-            <div class="apply-field">
-              <label for="apply-years-post-qual">Post-Qualification <span class="req-star">*</span></label>
-              <input type="number" id="apply-years-post-qual" placeholder="e.g. 5" min="0" />
-            </div>
-            <div class="apply-field">
-              <label for="apply-teaching-years">Teaching</label>
+            <div class="apply-field academic-only" id="field-teaching-years">
+              <label for="apply-teaching-years">Teaching Years</label>
               <input type="number" id="apply-teaching-years" placeholder="e.g. 3" min="0" />
             </div>
-            <div class="apply-field">
-              <label for="apply-research-years">Research</label>
+            <div class="apply-field academic-only" id="field-research-years">
+              <label for="apply-research-years">Research Years</label>
               <input type="number" id="apply-research-years" placeholder="e.g. 2" min="0" />
             </div>
             <div class="apply-field">
-              <label for="apply-industry-years">Industry</label>
+              <label for="apply-industry-years">Years of Industry Experience</label>
               <input type="number" id="apply-industry-years" placeholder="e.g. 2" min="0" />
             </div>
-            <div class="apply-field">
-              <label for="apply-publications">Scholarly Publications</label>
+            <div class="apply-field academic-only" id="field-publications">
+              <label for="apply-publications">Publications</label>
               <input type="number" id="apply-publications" placeholder="e.g. 4" min="0" />
             </div>
 
@@ -489,16 +416,20 @@
 
             <div class="apply-field apply-field--full" style="flex-direction:row;align-items:center;gap:10px">
               <input type="checkbox" id="apply-ict-proficiency"
-                style="width:18px;height:18px;margin:0;cursor:pointer" />
+                style="width:18px;height:18px;margin:0;cursor:pointer"
+                onchange="toggleIctFields(this)" />
               <label for="apply-ict-proficiency" style="margin:0;cursor:pointer">ICT Proficient</label>
             </div>
-            <div class="apply-field">
-              <label for="apply-computer-skills">Computer Skills <small>(comma-separated)</small></label>
-              <input type="text" id="apply-computer-skills" placeholder="e.g. MS Word, Excel, PowerPoint" />
-            </div>
-            <div class="apply-field">
-              <label for="apply-prof-certs">Certifications <small>(comma-separated)</small></label>
-              <input type="text" id="apply-prof-certs" placeholder="e.g. AWS Certified, CCNA" />
+            <!-- Hidden until ICT checkbox is checked -->
+            <div class="apply-field ict-extra" id="ict-fields-wrap" style="display:none;grid-column:1/-1;display:none;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="apply-field">
+                <label for="apply-computer-skills">Computer Skills <small>(comma-separated)</small></label>
+                <input type="text" id="apply-computer-skills" placeholder="e.g. MS Word, Excel, PowerPoint" />
+              </div>
+              <div class="apply-field">
+                <label for="apply-prof-certs">Certifications <small>(comma-separated)</small></label>
+                <input type="text" id="apply-prof-certs" placeholder="e.g. AWS Certified, CCNA" />
+              </div>
             </div>
 
             <p class="apply-field--full"

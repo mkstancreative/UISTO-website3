@@ -1,224 +1,137 @@
-const JOBS_API_URL = "https://career.uisto.edu.ng/api/v1/";
-
+const JOBS_API_URL = "http://192.168.1.37:5000/api/v1/";
 
 /* ── Job Data State ───────────────────────────────────── */
-let uistoJobs = [];
-let currentPage = 1;
-let itemsPerPage = 10;
-let totalPages = 1;
-let totalJobs = 0;
-let searchQuery = "";
-let activeFilter = "all";   // active category pill
-let activeJobId = null;
+let uistoJobs = [];        // all jobs from API
 let isLoading = false;
 
+/* ── Fetch all jobs for the selector ─────────────────── */
+async function loadJobSelector() {
+    const sel = document.getElementById("apply-job-select");
+    if (!sel) return;
 
-/* ── API Fetch Functions ──────────────────────────────── */
-async function fetchJobs() {
+    sel.innerHTML = `<option value="">Loading positions…</option>`;
+    sel.disabled = true;
+
     try {
-        isLoading = true;
-        renderCards();
+        const res = await fetch(`${JOBS_API_URL}careers?limit=100`);
+        const json = await res.json();
 
-        const params = new URLSearchParams({
-            page: currentPage,
-            limit: itemsPerPage
-        });
-        if (searchQuery) params.append("search", searchQuery);
-
-        const res = await fetch(`${JOBS_API_URL}careers?${params.toString()}`);
-        const result = await res.json();
-
-        if (result.success) {
-            uistoJobs = result.data;
-            totalJobs = result.total || 0;
-            totalPages = Math.ceil(totalJobs / itemsPerPage);
-        } else {
-            uistoJobs = [];
-            totalJobs = 0;
-            totalPages = 1;
-        }
-    } catch (err) {
-        console.error("Error fetching jobs:", err);
-        uistoJobs = [];
-    } finally {
-        isLoading = false;
-        renderCards();
-        renderFilters();
-        renderPagination();
-    }
-}
-
-function handleSearch() {
-    const input = document.getElementById("uisto-search").value;
-    searchQuery = input;
-    currentPage = 1;
-    clearTimeout(window.searchTimeout);
-    window.searchTimeout = setTimeout(() => {
-        fetchJobs();
-    }, 500);
-}
-
-function filterByCategory(cadre) {
-    activeFilter = cadre;
-    renderCards();
-    renderFilters();
-}
-
-function changePage(newPage) {
-    if (newPage < 1 || newPage > totalPages) return;
-    currentPage = newPage;
-    fetchJobs();
-}
-
-/* ── Render Category Filters ────────────────────────────── */
-function renderFilters() {
-    const bar = document.getElementById("uisto-filters");
-    if (!bar) return;
-
-    // Collect unique cadre names from loaded jobs
-    const categories = ["all", ...new Set(
-        uistoJobs.map((j) => j.cadre?.name).filter(Boolean)
-    )];
-
-    bar.innerHTML = categories.map((cat) => {
-        const isActive = cat === activeFilter;
-        const label = cat === "all" ? "All" : cat;
-        return `<button class="filter-pill${isActive ? " active" : ""}" onclick="filterByCategory('${cat}')">${label}</button>`;
-    }).join("");
-}
-
-function renderPagination() {
-    const paginationContainer = document.getElementById("uisto-pagination");
-    if (!paginationContainer) return;
-
-    if (totalPages <= 1) {
-        paginationContainer.innerHTML = "";
-        return;
-    }
-
-    let html = `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>Previous</button>`;
-
-    for (let i = 1; i <= totalPages; i++) {
-        html += `<button class="pagination-btn ${i === currentPage ? "active" : ""}" onclick="changePage(${i})">${i}</button>`;
-    }
-
-    html += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}>Next</button>`;
-
-    paginationContainer.innerHTML = html;
-}
-
-/* ── Render Cards ─────────────────────────────────────── */
-function renderCards() {
-    const countEl = document.getElementById("uisto-count");
-    if (isLoading) {
-        if (countEl) countEl.textContent = "Loading jobs...";
-        document.getElementById("uisto-grid").innerHTML = "<p>Loading positions...</p>";
-        return;
-    }
-
-    const filteredJobs = activeFilter === "all"
-        ? uistoJobs
-        : uistoJobs.filter((j) => j.cadre?.name === activeFilter);
-
-    if (countEl) {
-        countEl.textContent = `Showing ${filteredJobs.length} position${filteredJobs.length !== 1 ? "s" : ""} (Total on page: ${uistoJobs.length})`;
-    }
-
-    if (filteredJobs.length === 0) {
-        document.getElementById("uisto-grid").innerHTML = "<p>No positions match the selected category.</p>";
-        return;
-    }
-
-    document.getElementById("uisto-grid").innerHTML = filteredJobs
-        .map((j) => {
-            const reqText = j.description || j.requirements?.[0] || "";
-            const preview = reqText.length > 90 ? reqText.slice(0, 90) + "…" : reqText;
-            const catName = j.cadre?.name || "Career";
-            return `
-        <div class="job-card" onclick="openJobDetail('${j._id}')">
-          <div class="card-top">
-            <span class="card-title">${j.title}</span>
-            <span class="badge badge-${catName.toLowerCase().replace(/[^a-z0-9]/g, '-')}">${catName}</span>
-          </div>
-          <p class="card-req">${preview}</p>
-          <div class="card-footer">
-            <span class="card-type-tag">${j.type || "Full-Time"}</span>
-            <span class="card-level-tag">${j.rank || "Staff"}</span>
-            <span class="card-arrow">View Details →</span>
-          </div>
-        </div>`;
-        })
-        .join("");
-}
-
-/* ── Job Detail Modal ─────────────────────────────────── */
-async function openJobDetail(id) {
-    try {
-        const res = await fetch(`${JOBS_API_URL}careers/${id}`);
-        const result = await res.json();
-
-        if (!result.success || !result.data) {
-            alert("Job details could not be loaded.");
+        if (!json.success || !json.data?.length) {
+            sel.innerHTML = `<option value="">No positions available</option>`;
             return;
         }
 
-        const job = result.data;
-        activeJobId = id;
+        uistoJobs = json.data;
+        _renderJobOptions(uistoJobs, ""); // show ALL positions — role type inferred from selection
 
-        const catName = job.cadre?.name || "Career";
-        const minQual = job.qualificationMatrix ?
-            `${job.qualificationMatrix.minimumDegree || ""} ${job.qualificationMatrix.minimumClass ? '(' + job.qualificationMatrix.minimumClass + ')' : ''} with ${job.qualificationMatrix.requiredYearsExperience || 0} years experience`
-            : "";
-
-        const defaultClass = "badge-" + catName.toLowerCase().replace(/[^a-z0-9]/g, '-');
-        document.getElementById("jd-badge").className = `jd-badge badge ${defaultClass}`;
-        document.getElementById("jd-badge").textContent = catName;
-        document.getElementById("jd-title").textContent = job.title;
-        document.getElementById("jd-type").textContent = job.type || "Full-Time";
-        document.getElementById("jd-level").textContent = job.rank || "";
-        document.getElementById("jd-qualifications").textContent = minQual;
-
-        let responsibilities = job.requirements || [];
-        if (!Array.isArray(responsibilities)) {
-            responsibilities = [];
-        }
-
-        document.getElementById("jd-responsibilities").innerHTML = responsibilities
-            .map((d) => `<li>${d}</li>`)
-            .join("");
-
-        const applyPositionLabel = document.getElementById("apply-position-label");
-        if (applyPositionLabel) {
-            applyPositionLabel.textContent = `Applying for: ${job.title}`;
-        }
-        const applyPositionId = document.getElementById("apply-position-id");
-        if (applyPositionId) {
-            applyPositionId.value = job._id;
-        }
-
-        document.getElementById("job-detail-overlay").classList.add("active");
-        document.body.style.overflow = "hidden";
     } catch (err) {
-        console.error("Error fetching job details:", err);
-        alert("Failed to fetch job details.");
+        console.error("loadJobSelector error:", err.message || err);
+        sel.innerHTML = `<option value="">Failed to load positions. Please retry.</option>`;
+    } finally {
+        sel.disabled = false;
     }
 }
 
-function closeJobDetail() {
-    document.getElementById("job-detail-overlay").classList.remove("active");
-    document.body.style.overflow = "";
+/* ── Re-render <option> groups based on cadre filter ─── */
+function _renderJobOptions(jobs, cadreFilter) {
+    const sel = document.getElementById("apply-job-select");
+    if (!sel) return;
+
+    // normalise cadre filter: "academic" → "Academic", "non-academic" → "Non-Academic" / anything else
+    const filterMap = { "academic": "Academic", "non-academic": "Non-Academic" };
+    const activeCadre = filterMap[cadreFilter] || null;
+
+    const filtered = activeCadre
+        ? jobs.filter(j => (j.position?.cadre || "").toLowerCase() === activeCadre.toLowerCase())
+        : jobs;
+
+    // Group by cadre for <optgroup>
+    const groups = {};
+    filtered.forEach(j => {
+        const cadre = j.position?.cadre || "Other";
+        if (!groups[cadre]) groups[cadre] = [];
+        groups[cadre].push(j);
+    });
+
+    sel.innerHTML = `<option value="">-- Select a position --</option>`;
+    Object.entries(groups).forEach(([cadre, list]) => {
+        const grp = document.createElement("optgroup");
+        grp.label = cadre;
+        list.forEach(j => {
+            const opt = document.createElement("option");
+            opt.value = j._id;
+            const dept = j.position?.department ? ` · ${j.position.department}` : "";
+            opt.textContent = `${j.position?.title || "Position"}${dept}`;
+            opt.dataset.cadre = j.position?.cadre || "";
+            opt.dataset.faculty = j.position?.faculty || "";
+            opt.dataset.department = j.position?.department || "";
+            opt.dataset.deadline = j.applicationDeadline || "";
+            opt.dataset.reqs = (j.position?.requirements || []).join(", ");
+            grp.appendChild(opt);
+        });
+        sel.appendChild(grp);
+    });
+
+    if (!filtered.length) {
+        sel.innerHTML = `<option value="">No ${activeCadre || ""} positions available</option>`;
+    }
+}
+
+/* ── Handle job selection ─────────────────────────────── */
+function onJobSelect(selectedId) {
+    // Set hidden jobId
+    const hiddenId = document.getElementById("apply-position-id");
+    if (hiddenId) hiddenId.value = selectedId;
+
+    const card = document.getElementById("job-preview-card");
+    if (!selectedId) {
+        if (card) card.style.display = "none";
+        return;
+    }
+
+    // Find selected option's dataset
+    const opt = document.querySelector(`#apply-job-select option[value="${selectedId}"]`);
+    if (!opt || !card) return;
+
+    const cadreRaw = opt.dataset.cadre || "";
+    const cadreKey = cadreRaw.toLowerCase() === "academic" ? "academic" : "non-academic";
+
+    // Update role type toggle (auto-detect from cadre)
+    if (typeof setRoleType === "function") setRoleType(cadreKey);
+
+    // Update job preview card
+    document.getElementById("job-preview-title").textContent = opt.textContent;
+    document.getElementById("job-preview-dept").textContent =
+        [opt.dataset.faculty, opt.dataset.department].filter(Boolean).join(" · ") || "";
+    document.getElementById("job-preview-cadre").textContent = cadreRaw;
+    document.getElementById("job-preview-cadre").className =
+        "job-preview-badge" + (cadreKey === "academic" ? " badge-academic-type" : " badge-nonacdemic-type");
+
+    const dl = opt.dataset.deadline
+        ? "Deadline: " + new Date(opt.dataset.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+        : "";
+    document.getElementById("job-preview-deadline").textContent = dl;
+    // const reqs = opt.dataset.reqs ? "Requirements: " + opt.dataset.reqs : "";
+    // document.getElementById("job-preview-reqs").textContent = reqs;
+
+    card.style.display = "block";
+}
+
+/* ── When role type changes, re-filter the dropdown ──── */
+function onRoleTypeFilterChange(type) {
+    _renderJobOptions(uistoJobs, type);
+    // Reset job selection
+    const sel = document.getElementById("apply-job-select");
+    if (sel) sel.value = "";
+    const card = document.getElementById("job-preview-card");
+    if (card) card.style.display = "none";
+    const hidden = document.getElementById("apply-position-id");
+    if (hidden) hidden.value = "";
 }
 
 /* ── Overlay click-outside close ─────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("job-detail-overlay").addEventListener("click", function (e) {
-        if (e.target === this) closeJobDetail();
-    });
-    document.getElementById("apply-overlay").addEventListener("click", function (e) {
+    document.getElementById("apply-overlay")?.addEventListener("click", function (e) {
         if (e.target === this) closeApplyModal();
     });
-    // Note: state dropdown population and form submit are handled by CareerApplication.js
 });
-
-/* ── Init ─────────────────────────────────────────────── */
-fetchJobs();
