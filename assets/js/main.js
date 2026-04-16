@@ -30,16 +30,19 @@ loadSection(".section-header", "header.html", function () {
 
 loadSection(".section-footer", "footer.html");
 
-document.getElementById("playVideo").addEventListener("click", function () {
-  const video = document.getElementById("tourVideo");
-  const thumb = document.getElementById("videoThumb");
-  const box = document.getElementById("videoBox");
+const playBtn = document.getElementById("playVideo");
+if (playBtn) {
+  playBtn.addEventListener("click", function () {
+    const video = document.getElementById("tourVideo");
+    const thumb = document.getElementById("videoThumb");
+    const box = document.getElementById("videoBox");
 
-  const youtubeID = "KudqBnl8W8U?si=Eczs6pTtMG_Vpv0G";
+    const youtubeID = "KudqBnl8W8U?si=Eczs6pTtMG_Vpv0G";
 
-  video.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&controls=0&rel=0&modestbranding=1&showinfo=0&disablekb=1`;
+    video.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&controls=0&rel=0&modestbranding=1&showinfo=0&disablekb=1`;
 
-  thumb.style.display = "none";
-  this.style.display = "none";
-  video.style.display = "block";
-});
+    thumb.style.display = "none";
+    this.style.display = "none";
+    video.style.display = "block";
+  });
+}

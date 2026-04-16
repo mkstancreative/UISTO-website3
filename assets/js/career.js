@@ -67,7 +67,7 @@ function _renderJobOptions(jobs, cadreFilter) {
             opt.dataset.faculty = j.position?.faculty || "";
             opt.dataset.department = j.position?.department || "";
             opt.dataset.deadline = j.applicationDeadline || "";
-            opt.dataset.reqs = (j.position?.requirements || []).join(", ");
+            opt.dataset.reqs = JSON.stringify(j.position?.requirements || []);
             grp.appendChild(opt);
         });
         sel.appendChild(grp);
@@ -98,9 +98,12 @@ function onJobSelect(selectedId) {
     const cadreKey = cadreRaw.toLowerCase() === "academic" ? "academic" : "non-academic";
 
     // Update role type toggle (auto-detect from cadre)
-    if (typeof setRoleType === "function") setRoleType(cadreKey);
+    if (typeof setRoleType === "function") {
+    setRoleType(cadreKey, true); // prevent dropdown reset
+    }
 
     // Update job preview card
+    
     document.getElementById("job-preview-title").textContent = opt.textContent;
     document.getElementById("job-preview-dept").textContent =
         [opt.dataset.faculty, opt.dataset.department].filter(Boolean).join(" · ") || "";
@@ -114,6 +117,30 @@ function onJobSelect(selectedId) {
     document.getElementById("job-preview-deadline").textContent = dl;
     // const reqs = opt.dataset.reqs ? "Requirements: " + opt.dataset.reqs : "";
     // document.getElementById("job-preview-reqs").textContent = reqs;
+
+    const reqContainer = document.getElementById("job-preview-reqs");
+
+if (reqContainer) {
+    reqContainer.innerHTML = "";
+
+    if (opt.dataset.reqs) {
+        try {
+            const parsed = JSON.parse(opt.dataset.reqs);
+
+            if (Array.isArray(parsed) && parsed.length) {
+                reqContainer.innerHTML = parsed
+                    .map(r => `<li>${r}</li>`)
+                    .join("");
+            } else {
+                reqContainer.innerHTML = "<li>No requirements specified</li>";
+            }
+        } catch (err) {
+            console.error("Invalid requirements format:", opt.dataset.reqs);
+        }
+    }
+}
+
+    
 
     card.style.display = "block";
 }

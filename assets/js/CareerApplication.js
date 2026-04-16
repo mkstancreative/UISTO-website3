@@ -246,7 +246,7 @@ function toggleIctFields(checkbox) {
 /* ══════════════════════════════════════════════════════════════
    ROLE TYPE TOGGLE
    ══════════════════════════════════════════════════════════════ */
-function setRoleType(type) {
+function setRoleType(type, skipFilter = false) {
     currentRoleType = type;
 
     // Update tab UI
@@ -264,6 +264,11 @@ function setRoleType(type) {
         lbl.textContent = type === "academic"
             ? "Academic Staff Position"
             : "Non-Academic Staff Position";
+    }
+
+    // ✅ ADD THIS
+    if (!skipFilter) {
+        onRoleTypeFilterChange(type);
     }
 }
 
@@ -360,12 +365,12 @@ function _validateStep2() {
     // Common required fields
     _req("apply-degree-type", "Degree type", errs);
     _req("apply-institution", "Institution", errs);
-    _req("apply-referee-name", "Referee name", errs);
-    _req("apply-referee-email", "Referee email", errs);
+    // _req("apply-referee-name", "Referee name", errs);
+    // _req("apply-referee-email", "Referee email", errs);
 
     // Academic-only required fields
     if (isAcademic) {
-        _req("apply-degree-class", "Degree class", errs);
+        // _req("apply-degree-class", "Degree class", errs);
         _req("apply-year-awarded", "Year awarded", errs);
     }
 
@@ -418,13 +423,18 @@ async function submitApplication(e) {
     };
 
     /* ── qualifications ── */
+    const degreeObj = {
+        degreeType: document.getElementById("apply-degree-type").value,
+        institution: document.getElementById("apply-institution").value.trim(),
+    };
+    const degClass = document.getElementById("apply-degree-class").value;
+    if (degClass) degreeObj.degreeClass = degClass;
+    
+    const yrAwarded = document.getElementById("apply-year-awarded").value;
+    if (yrAwarded) degreeObj.yearAwarded = parseInt(yrAwarded, 10);
+
     const qualifications = {
-        degrees: [{
-            degreeType: document.getElementById("apply-degree-type").value,
-            degreeClass: document.getElementById("apply-degree-class").value,
-            institution: document.getElementById("apply-institution").value.trim(),
-            yearAwarded: parseInt(document.getElementById("apply-year-awarded").value, 10),
-        }],
+        degrees: [degreeObj],
     };
 
     /* ── experience ── */
@@ -453,13 +463,17 @@ async function submitApplication(e) {
     };
 
     /* ── referees ── */
-    const referees = [{
-        name: document.getElementById("apply-referee-name").value.trim(),
-        title: document.getElementById("apply-referee-title")?.value.trim() || "",
-        institution: document.getElementById("apply-referee-institution")?.value.trim() || "",
-        email: document.getElementById("apply-referee-email").value.trim(),
-        phone: document.getElementById("apply-referee-phone")?.value.trim() || "",
-    }];
+    const referees = [];
+    const refName = document.getElementById("apply-referee-name")?.value.trim();
+    if (refName) {
+        referees.push({
+            name: refName,
+            title: document.getElementById("apply-referee-title")?.value.trim() || "",
+            institution: document.getElementById("apply-referee-institution")?.value.trim() || "",
+            email: document.getElementById("apply-referee-email")?.value.trim() || "",
+            phone: document.getElementById("apply-referee-phone")?.value.trim() || "",
+        });
+    }
 
     /* ── Build FormData (exact Postman field names) ── */
     const fd = new FormData();
