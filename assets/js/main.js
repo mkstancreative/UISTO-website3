@@ -100,7 +100,6 @@
                 <a href="/blog" class="dropdown-text-link">News</a>
                 <a href="/gallery" class="dropdown-text-link">Gallery</a>
                 <a href="/campus" class="dropdown-text-link">Campus Tour</a>
-                <a href="/career/index" class="dropdown-text-link">Career</a>
                 <a href="/about" class="dropdown-text-link">About Us</a>
                 <a href="/contact" class="dropdown-text-link">Contact</a>
               </div>
