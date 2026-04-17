@@ -10,8 +10,8 @@
     role="banner"
     class="navbar w-nav"
   >
-    <a href="./index" aria-current="page" class="brand w-nav-brand w--current">
-      <img src="./assets/img/logo2.png" loading="lazy" alt="logo" width="70px" />
+    <a href="/index" aria-current="page" class="brand w-nav-brand w--current">
+      <img src="/assets/img/logo2.png" loading="lazy" alt="logo" width="70px" />
     </a>
     <nav role="navigation" class="nav-menu w-nav-menu">
       <a data-w-id="7b1b8292-efbe-45d3-f9b7-b8bf1652b056" href="#" class="nav-link-white w-inline-block">
@@ -33,10 +33,10 @@
             <div class="dropdown-block">
               <div class="dropdown-title">Administration</div>
               <div class="dropdown-nav-wrapper">
-                <a href="./vc" class="dropdown-text-link">Vice Chancellor</a>
-                <a href="./Bursar" class="dropdown-text-link">Bursar</a>
-                <a href="./registrar" class="dropdown-text-link">Registrar</a>
-                <a href="./librarian" class="dropdown-text-link">University Librarian</a>
+                <a href="/vc" class="dropdown-text-link">Vice Chancellor</a>
+                <a href="/Bursar" class="dropdown-text-link">Bursar</a>
+                <a href="/registrar" class="dropdown-text-link">Registrar</a>
+                <a href="/librarian" class="dropdown-text-link">University Librarian</a>
               </div>
             </div>
           </div>
@@ -55,8 +55,8 @@
             <div class="dropdown-block">
               <div class="dropdown-title">Academics</div>
               <div class="dropdown-nav-wrapper">
-                <a href="./programs" class="dropdown-text-link">Programs</a>
-                <a href="./jorunals" class="dropdown-text-link">E-Jorunals</a>
+                <a href="/programs" class="dropdown-text-link">Programs</a>
+                <a href="/jorunals" class="dropdown-text-link">E-Jorunals</a>
               </div>
             </div>
           </div>
@@ -75,9 +75,9 @@
             <div class="dropdown-block">
               <div class="dropdown-title">Admissions &amp; Aid</div>
               <div class="dropdown-nav-wrapper">
-                <a href="./admissions" class="dropdown-text-link">Admission Requirement</a>
-                <a href="./admission-list" class="dropdown-text-link">Admission List</a>
-                <a href="./pay-fees" class="dropdown-text-link">Pay Fees</a>
+                <a href="/admissions" class="dropdown-text-link">Admission Requirement</a>
+                <a href="/admission-list" class="dropdown-text-link">Admission List</a>
+                <a href="/pay-fees" class="dropdown-text-link">Pay Fees</a>
               </div>
             </div>
           </div>
@@ -96,12 +96,12 @@
             <div class="dropdown-block">
               <div class="dropdown-title">More</div>
               <div class="dropdown-nav-wrapper">
-                <a href="./events" class="dropdown-text-link">Event</a>
-                <a href="./blog" class="dropdown-text-link">News</a>
-                <a href="./gallery" class="dropdown-text-link">Gallery</a>
-                <a href="./campus" class="dropdown-text-link">Campus Tour</a>
-                <a href="./about" class="dropdown-text-link">About Us</a>
-                <a href="./contact.html" class="dropdown-text-link">Contact</a>
+                <a href="/events" class="dropdown-text-link">Event</a>
+                <a href="/blog" class="dropdown-text-link">News</a>
+                <a href="/gallery" class="dropdown-text-link">Gallery</a>
+                <a href="/campus" class="dropdown-text-link">Campus Tour</a>
+                <a href="/about" class="dropdown-text-link">About Us</a>
+                <a href="/contact" class="dropdown-text-link">Contact</a>
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@
     <div class="footer-widget-area">
       <div class="footer-widget-about">
         <a href="#" class="footer-logo-link w-inline-block">
-          <img src="./assets/img/logo1.png" loading="lazy" width="99" alt="Logo" />
+          <img src="/assets/img/logo1.png" loading="lazy" width="99" alt="Logo" />
         </a>
         <div class="footer-info-list-block">
           <div class="footer-info-item-block">
@@ -150,28 +150,28 @@
       </div>
       <div class="footer-widget-nav">
         <div class="footer-nav-block">
-          <a href="./index" aria-current="page" class="footer-nav-link w-inline-block w--current">
+          <a href="/index" aria-current="page" class="footer-nav-link w-inline-block w--current">
             <div class="footer-inner-block">
               <div class="footer-text">Home</div>
               <div class="footer-text-hover">Home</div>
             </div>
             <div class="footer-nav-hover-dash"></div>
           </a>
-          <a href="./registrar" class="footer-nav-link w-inline-block">
+          <a href="/registrar" class="footer-nav-link w-inline-block">
             <div class="footer-inner-block">
               <div class="footer-text">Registrar</div>
               <div class="footer-text-hover">Registrar</div>
             </div>
             <div class="footer-nav-hover-dash"></div>
           </a>
-          <a href="./Bursar" class="footer-nav-link w-inline-block">
+          <a href="/Bursar" class="footer-nav-link w-inline-block">
             <div class="footer-inner-block">
               <div class="footer-text">Bursar</div>
               <div class="footer-text-hover">Bursar</div>
             </div>
             <div class="footer-nav-hover-dash"></div>
           </a>
-          <a href="./librarian" class="footer-nav-link w-inline-block">
+          <a href="/librarian" class="footer-nav-link w-inline-block">
             <div class="footer-inner-block">
               <div class="footer-text">University Librarian</div>
               <div class="footer-text-hover">University Librarian</div>
@@ -182,14 +182,14 @@
       </div>
       <div class="footer-widget-nav">
         <div class="footer-nav-block">
-          <a href="./about" class="footer-nav-link w-inline-block">
+          <a href="/about" class="footer-nav-link w-inline-block">
             <div class="footer-inner-block">
               <div class="footer-text">About</div>
               <div class="footer-text-hover">About</div>
             </div>
             <div class="footer-nav-hover-dash"></div>
           </a>
-          <a href="./programs" class="footer-nav-link w-inline-block">
+          <a href="/programs" class="footer-nav-link w-inline-block">
             <div class="footer-inner-block">
               <div class="footer-text">Apply Now</div>
               <div class="footer-text-hover">Apply Now</div>
