@@ -51,7 +51,7 @@ async function loadRefereeForm(token) {
   showState("loading");
 
   try {
-    const res = await fetch(`${REF_API}referees/form/${encodeURIComponent(token)}`);
+    const res = await fetch(`${REF_API}referees/${encodeURIComponent(token)}`);
     const data = await res.json();
 
     if (!res.ok || !data.success) {
