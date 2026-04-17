@@ -54,8 +54,7 @@ async function loadRefereeForm(token) {
     const res = await fetch(`${REF_API}referee/${token}`);
     const data = await res.json();
 
-    // API returns a flat object — treat a non-OK HTTP status OR an
-    // explicit { message } error payload as a failure.
+    // API returns a flat object — treat a non-OK HTTP status as a failure.
     if (!res.ok) {
       qs("error-msg").textContent =
         data.message || "This referee link is invalid or has already expired.";
@@ -63,24 +62,25 @@ async function loadRefereeForm(token) {
       return;
     }
 
-    // ── Populate applicant card ──────────────────────────
-    // Response shape: { refereeName, applicantName, jobTitle, university }
-    const applicantName = data.applicantName || "Applicant";
-    const positionTitle = data.jobTitle      || "—";
-    const positionType  = data.university    || "—";
-    const deadline      = data.applicationDeadline || data.deadline || "";
+    // ── Response shape: { refereeName, applicantName, jobTitle, university, gender? }
+    const refereeName   = data.refereeName   || "Referee";
+    const applicantName = data.applicantName || "the applicant";
+    const positionTitle = data.jobTitle      || "the advertised position";
+    const university    = data.university    || "UISTO";
 
-    qs("applicant-name").textContent         = applicantName;
-    qs("applicant-position").textContent      = positionTitle;
-    qs("applicant-position-type").textContent = positionType;
+    // Gender-aware pronouns (API may send "Male", "Female", or nothing)
+    const gender = (data.gender || "").toLowerCase();
+    const pronoun = gender === "male" ? "his" : gender === "female" ? "her" : "their";
 
-    if (deadline) {
-      const dl = new Date(deadline).toLocaleDateString("en-GB", {
-        day: "numeric", month: "short", year: "numeric",
-      });
-      qs("applicant-deadline").textContent = `Deadline: ${dl}`;
-      qs("deadline-pill").style.display = "flex";
-    }
+    // ── Salutation
+    qs("ref-salutation").textContent = `Dear ${refereeName},`;
+
+    // ── Intro paragraph (use innerHTML for .highlight spans)
+    qs("ref-intro-text").innerHTML =
+      `<span class="highlight">${applicantName}</span> has applied for the position of ` +
+      `<span class="highlight">${positionTitle}</span> at the ` +
+      `<span class="highlight">${university}</span> and has nominated you as ` +
+      `${pronoun} referee.`;
 
     // Show the form
     showState(null);
@@ -102,6 +102,14 @@ async function submitReference(e) {
   const referenceText = qs("ref-text").value.trim();
   if (!referenceText) {
     showToast("Please write your reference before submitting.", "warning");
+    qs("ref-text").focus();
+    return;
+  }
+
+  // Word limit guard
+  const wordCount = referenceText.split(/\s+/).filter(Boolean).length;
+  if (wordCount > 1000) {
+    showToast(`Your reference exceeds 1000 words (${wordCount} words). Please shorten it.`, "error");
     qs("ref-text").focus();
     return;
   }
@@ -176,6 +184,21 @@ function setupFileInput() {
   });
 }
 
+/* ── Word count countdown ──────────────────────────── */
+function setupWordCount() {
+  const LIMIT   = 1000;
+  const textarea = qs("ref-text");
+  const counter  = qs("word-count");
+
+  textarea.addEventListener("input", () => {
+    const words     = textarea.value.trim().split(/\s+/).filter(Boolean).length;
+    const remaining = LIMIT - words;
+    counter.textContent = remaining < 0 ? 0 : remaining;
+    counter.classList.toggle("warn", remaining >= 0 && remaining <= 100);
+    counter.classList.toggle("over", remaining < 0);
+  });
+}
+
 /* ── Init ────────────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
   // Set footer year
@@ -187,6 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // File input
   setupFileInput();
+
+  // Word count
+  setupWordCount();
+
+  // "HERE" link opens the file picker
+  const attachLink = qs("attach-link");
+  if (attachLink) {
+    attachLink.addEventListener("click", () => qs("ref-file").click());
+  }
 
   // Load data
   const token = getToken();
