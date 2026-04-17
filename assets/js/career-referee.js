@@ -54,7 +54,9 @@ async function loadRefereeForm(token) {
     const res = await fetch(`${REF_API}referee/${token}`);
     const data = await res.json();
 
-    if (!res.ok || !data.success) {
+    // API returns a flat object — treat a non-OK HTTP status OR an
+    // explicit { message } error payload as a failure.
+    if (!res.ok) {
       qs("error-msg").textContent =
         data.message || "This referee link is invalid or has already expired.";
       showState("error");
@@ -62,17 +64,11 @@ async function loadRefereeForm(token) {
     }
 
     // ── Populate applicant card ──────────────────────────
-    const d = data.data; // shape depends on your API response
-
-    const applicantName = [
-      d.applicant?.firstName,
-      d.applicant?.middleName,
-      d.applicant?.lastName,
-    ].filter(Boolean).join(" ") || d.applicantName || "Applicant";
-
-    const positionTitle  = d.position?.title || d.positionTitle || "—";
-    const positionType   = d.position?.cadre || d.cadre || "—";
-    const deadline       = d.applicationDeadline || d.deadline || "";
+    // Response shape: { refereeName, applicantName, jobTitle, university }
+    const applicantName = data.applicantName || "Applicant";
+    const positionTitle = data.jobTitle      || "—";
+    const positionType  = data.university    || "—";
+    const deadline      = data.applicationDeadline || data.deadline || "";
 
     qs("applicant-name").textContent         = applicantName;
     qs("applicant-position").textContent      = positionTitle;
