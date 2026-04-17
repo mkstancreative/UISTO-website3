@@ -132,13 +132,18 @@ async function submitReference(e) {
   btn.innerHTML = `<span class="btn-spinner"></span> Submitting…`;
 
   try {
-    const res = await fetch(`${REF_API}referees/submit/${encodeURIComponent(token)}`, {
+    const res = await fetch(`${REF_API}referee/${encodeURIComponent(token)}`, {
       method: "POST",
       body: fd,
     });
-    const data = await res.json();
 
-    if (!res.ok || !data.success) {
+    // Safe parse — server might return HTML on unexpected errors
+    const contentType = res.headers.get("content-type") || "";
+    const data = contentType.includes("application/json")
+      ? await res.json()
+      : { message: `Server returned ${res.status} (${res.statusText})` };
+
+    if (!res.ok) {
       throw new Error(data.message || `Server error ${res.status}`);
     }
 
