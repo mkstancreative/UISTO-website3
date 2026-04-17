@@ -14,7 +14,7 @@ async function loadJobSelector() {
     sel.disabled = true;
 
     try {
-        const res = await fetch(`${JOBS_API_URL}careers?limit=100`);
+        const res = await fetch(`${JOBS_API_URL}careers?limit=1000`);
         const json = await res.json();
 
         if (!json.success || !json.data?.length) {
@@ -61,8 +61,7 @@ function _renderJobOptions(jobs, cadreFilter) {
         list.forEach(j => {
             const opt = document.createElement("option");
             opt.value = j._id;
-            const dept = j.position?.department ? ` · ${j.position.department}` : "";
-            opt.textContent = `${j.position?.title || "Position"}${dept}`;
+            opt.textContent = `${j.position?.title || "Position"}`;
             opt.dataset.cadre = j.position?.cadre || "";
             opt.dataset.faculty = j.position?.faculty || "";
             opt.dataset.department = j.position?.department || "";

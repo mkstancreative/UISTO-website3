@@ -384,7 +384,7 @@ function _validateStep2() {
 
 function _validateRoleType() {
     if (!currentRoleType) {
-        showToast("Please select a position type (Academic or Non-Academic).", "warning");
+        showToast("Please select a position type (Academic or Non-Teaching).", "warning");
         return false;
     }
     return true;
@@ -491,15 +491,16 @@ async function submitApplication(e) {
     const cvFile = document.getElementById("apply-cv")?.files[0];
     if (cvFile) fd.append("resume", cvFile);
 
-    const docsFiles = document.getElementById("apply-docs")?.files;
-    if (docsFiles?.length) {
-        Array.from(docsFiles).forEach(f => fd.append("supportingDocument", f));
-    }
+    const docFile = document.getElementById("apply-docs")?.files[0];
+    if (docFile) fd.append("supportingDocument", docFile);
 
     /* ── Submit ── */
     const submitBtn = document.querySelector(".apply-submit-btn[type='submit']");
     const origHTML = submitBtn?.innerHTML;
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="btn-spinner" style="margin-right:8px; border-top-color:#fff;"></span> Uploading & Submitting...`;
+    }
 
     try {
         const res = await fetch(`${APP_API_URL}applications/apply`, { method: "POST", body: fd });

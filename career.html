@@ -144,7 +144,7 @@
               <div class="uisto-pos-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#1e3a5f" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#1e3a5f" stroke-width="2"/></svg>
               </div>
-              <h4>Non-Academic Positions</h4>
+              <h4>Non-Teaching Positions</h4>
               <p>Administrative, technical, library, legal, and support staff roles across all units.</p>
               <span class="uisto-pos-tag">Multiple Openings</span>
             </div>
@@ -282,7 +282,7 @@
               <button type="button" class="role-tab" id="role-tab-non-academic" onclick="setRoleType('non-academic')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="2"/></svg>
                 <div class="role-tab-text">
-                  <span class="role-tab-name">Non-Academic Staff</span>
+                  <span class="role-tab-name">Non-Teaching Staff</span>
                   <small class="role-tab-sub">Administrative &amp; Technical Staff</small>
                 </div>
               </button>
@@ -436,12 +436,12 @@
             </style>
 
             <div class="apply-field">
-              <label for="apply-institution">Institution <small>(Optional)</small><span class="req-star">*</span></label>
+              <label for="apply-institution">Institution<span class="req-star">*</span></label>
               <input type="text" id="apply-institution" placeholder="e.g. University of Lagos" />
             </div>
 
             <div class="apply-field academic-only" id="field-year-awarded">
-              <label for="apply-year-awarded">Year Awarded <small>(Optional)</small><span class="req-star">*</span></label>
+              <label for="apply-year-awarded">Year Awarded<span class="req-star">*</span></label>
               <input type="number" id="apply-year-awarded" placeholder="e.g. 2018" min="1950" max="2030" />
             </div>
 
@@ -529,7 +529,7 @@
         <div class="apply-step" id="apply-step-3">
 
           <div class="apply-file-group">
-            <label class="apply-file-label">Cover Letter <span class="req-star">*</span></label>
+            <label class="apply-file-label">Application Letter<span class="req-star">*</span></label>
             <p class="apply-file-hint">Upload your application letter (PDF only, max 5 MB)</p>
             <label class="file-drop-zone" for="apply-cover">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -562,18 +562,14 @@
 
           <div class="apply-file-group">
             <label class="apply-file-label">Supporting Documents</label>
-            <p class="apply-file-hint">All Supporting Documents should be in one PDF file (PDF, max 10 MB total)
-            </p>
+            <p class="apply-file-hint">All Supporting Documents should be compiled into one PDF file (Max 10 MB)</p>
             <label class="file-drop-zone" for="apply-docs">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="#1e3a5f" stroke-width="1.5" stroke-linecap="round"
-                  stroke-linejoin="round" />
+                <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="#1e3a5f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 <rect x="3" y="3" width="18" height="18" rx="4" stroke="#c8d4e0" stroke-width="1.2" />
               </svg>
-              <span class="file-drop-text" id="apply-docs-label" data-default="Click to upload multiple files">Click to
-                upload files</span>
-              <input type="file" id="apply-docs" name="supporting_documents[]" accept=".pdf,.doc,.docx,.jpg,.png"
-                multiple onchange="updateFileLabel('apply-docs','apply-docs-label')" />
+              <span class="file-drop-text" id="apply-docs-label" data-default="Click to upload a file">Click to upload a file</span>
+              <input type="file" id="apply-docs" name="supportingDocument" accept=".pdf,.doc,.docx,.jpg,.png" onchange="updateFileLabel('apply-docs','apply-docs-label')" />
             </label>
           </div>
 
