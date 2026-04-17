@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Submit Reference – UISTO Career</title>
+  <meta name="description" content="Submit a reference for a UISTO job applicant." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="shortcut icon" href="../assets/img/logo2.png" type="image/x-icon" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b2a;
+      --navy2:  #132236;
+      --gold:   #c9a84c;
+      --gold2:  #e0bc6e;
+      --white:  #ffffff;
+      --muted:  #8a9ab0;
+      --border: rgba(201,168,76,.22);
+      --card:   rgba(19,34,54,.85);
+      --radius: 14px;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .ref-topbar {
+      background: rgba(13,27,42,.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ref-topbar img { height: 44px; }
+    .ref-topbar-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ── Page wrapper ── */
+    .ref-page {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 16px 80px;
+    }
+
+    .ref-container {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    /* ── States ── */
+    .state-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 340px;
+      text-align: center;
+      gap: 20px;
+    }
+    .state-screen.active { display: flex; }
+
+    .spinner {
+      width: 52px; height: 52px;
+      border: 3px solid rgba(201,168,76,.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .state-icon {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+    .state-icon.error  { background: rgba(220,53,69,.15); color: #dc3545; }
+    .state-icon.success { background: rgba(25,135,84,.15); color: #198754; }
+
+    .state-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px; font-weight: 700;
+    }
+    .state-sub { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 480px; }
+
+    /* ── Applicant card ── */
+    .applicant-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(16px);
+    }
+    .applicant-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .applicant-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .applicant-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px;
+      padding: 5px 13px;
+    }
+    .meta-pill svg { flex-shrink: 0; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+    .form-card-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .form-card-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 22px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #c8d4e0;
+      margin-bottom: 8px;
+      letter-spacing: .02em;
+    }
+    .req-star { color: var(--gold); margin-left: 2px; }
+
+    textarea {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(201,168,76,.25);
+      border-radius: 10px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 14px 16px;
+      resize: vertical;
+      min-height: 200px;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+    }
+    textarea::placeholder { color: rgba(255,255,255,.25); }
+
+    /* ── File drop zone ── */
+    .file-group { margin-top: 4px; }
+    .file-group label.drop-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 2px dashed rgba(201,168,76,.3);
+      border-radius: 12px;
+      padding: 32px 20px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      background: rgba(255,255,255,.02);
+      text-align: center;
+    }
+    .file-group label.drop-zone:hover {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.04);
+    }
+    .file-group label.drop-zone.has-file {
+      border-color: #198754;
+      background: rgba(25,135,84,.06);
+    }
+    .file-group input[type="file"] { display: none; }
+    .drop-icon { color: var(--gold); opacity: .7; }
+    .drop-text {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .drop-hint {
+      font-size: 12px;
+      color: rgba(138,154,176,.6);
+    }
+
+    /* ── Submit btn ── */
+    .submit-btn {
+      width: 100%;
+      margin-top: 28px;
+      padding: 16px;
+      background: var(--gold);
+      color: #0d1b2a;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      letter-spacing: .02em;
+    }
+    .submit-btn:hover:not(:disabled) {
+      background: var(--gold2);
+      box-shadow: 0 6px 24px rgba(201,168,76,.35);
+      transform: translateY(-1px);
+    }
+    .submit-btn:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+    .btn-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(13,27,42,.3);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── Footer ── */
+    .ref-footer {
+      text-align: center;
+      padding: 24px;
+      color: rgba(138,154,176,.5);
+      font-size: 12px;
+      border-top: 1px solid rgba(255,255,255,.05);
+    }
+
+    /* ── Toast ── */
+    #toast-container {
+      position: fixed; top: 24px; right: 24px; z-index: 99999;
+      display: flex; flex-direction: column; gap: 10px;
+      max-width: 360px; pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      .ref-topbar { padding: 0 16px; }
+      .applicant-card, .form-card { padding: 20px; }
+      .applicant-name { font-size: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top bar -->
+  <div class="ref-topbar">
+    <a href="../index"><img src="../assets/img/logo2.png" alt="UISTO Logo" /></a>
+    <span class="ref-topbar-label">Referee Portal</span>
+  </div>
+
+  <div class="ref-page">
+    <div class="ref-container">
+
+      <!-- Loading state -->
+      <div class="state-screen active" id="state-loading">
+        <div class="spinner"></div>
+        <p style="color:var(--muted);font-size:15px;">Validating your referee link…</p>
+      </div>
+
+      <!-- Error state -->
+      <div class="state-screen" id="state-error">
+        <div class="state-icon error">✕</div>
+        <h2 class="state-title">Invalid or Expired Link</h2>
+        <p class="state-sub" id="error-msg">
+          This referee link is invalid or has already expired.<br/>
+          Please contact the applicant or UISTO HR for assistance.
+        </p>
+      </div>
+
+      <!-- Success state (after submit) -->
+      <div class="state-screen" id="state-success">
+        <div class="state-icon success">✓</div>
+        <h2 class="state-title">Reference Submitted!</h2>
+        <p class="state-sub">
+          Thank you for submitting your reference. Your response has been recorded
+          and will be reviewed by the UISTO HR team.
+        </p>
+      </div>
+
+      <!-- Main form (hidden until token validated) -->
+      <div id="main-form" style="display:none;">
+
+        <!-- Applicant info card -->
+        <div class="applicant-card" id="applicant-card">
+          <div class="applicant-card-label">Reference Request For</div>
+          <div class="applicant-name" id="applicant-name">—</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:4px;" id="applicant-position">—</div>
+          <div class="applicant-meta">
+            <div class="meta-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" stroke="currentColor" stroke-width="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z" stroke="currentColor" stroke-width="2"/></svg>
+              <span id="applicant-position-type">—</span>
+            </div>
+            <div class="meta-pill" id="deadline-pill" style="display:none;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span id="applicant-deadline">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference form -->
+        <div class="form-card">
+          <h2 class="form-card-title">Submit Your Reference</h2>
+          <p class="form-card-sub">
+            Please provide an honest and detailed reference for the applicant above.
+            Your response will be treated with the utmost confidentiality.
+          </p>
+
+          <form id="referee-form" novalidate>
+
+            <div class="field">
+              <label for="ref-text">
+                Reference Letter / Statement
+                <span class="req-star">*</span>
+              </label>
+              <textarea
+                id="ref-text"
+                name="referenceText"
+                placeholder="Write your reference here. Include your professional assessment of the applicant's skills, character, work ethic, and suitability for the role…"
+                required
+              ></textarea>
+            </div>
+
+            <div class="field">
+              <label>
+                Supporting Document
+                <span style="color:var(--muted);font-weight:400;"> (Optional — PDF, DOC, max 10 MB)</span>
+              </label>
+              <div class="file-group">
+                <label class="drop-zone" for="ref-file" id="ref-file-zone">
+                  <svg class="drop-icon" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.2"/>
+                  </svg>
+                  <span class="drop-text" id="ref-file-label">Click to upload or drag &amp; drop</span>
+                  <span class="drop-hint">PDF, DOC, DOCX — max 10 MB</span>
+                  <input type="file" id="ref-file" name="referenceFile" accept=".pdf,.doc,.docx" />
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submit-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Submit Reference
+            </button>
+
+            <p class="disclaimer">
+              By submitting this form you confirm that the information provided is truthful
+              and based on your personal knowledge of the applicant.
+            </p>
+
+          </form>
+        </div>
+      </div><!-- /main-form -->
+
+    </div>
+  </div>
+
+  <div class="ref-footer">
+    &copy; <span id="yr"></span> University of Innovation, Science and Technology, Omuma (UISTO). All rights reserved.
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="../assets/js/career-referee.js"></script>
+</body>
+</html>

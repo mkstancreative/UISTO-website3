@@ -23,7 +23,9 @@ async function loadJobSelector() {
         }
 
         uistoJobs = json.data;
-        _renderJobOptions(uistoJobs, ""); // show ALL positions — role type inferred from selection
+        // Render with the currently active role type so the filter is correct on initial load
+        const activeType = (typeof currentRoleType !== "undefined" && currentRoleType) ? currentRoleType : "academic";
+        _renderJobOptions(uistoJobs, activeType);
 
     } catch (err) {
         console.error("loadJobSelector error:", err.message || err);

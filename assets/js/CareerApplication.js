@@ -258,6 +258,11 @@ function setRoleType(type, skipFilter = false) {
         el.classList.toggle("hidden", type !== "academic");
     });
 
+    // Show/hide non-academic-only fields
+    document.querySelectorAll(".non-academic-only").forEach(el => {
+        el.classList.toggle("hidden", type !== "non-academic");
+    });
+
     // Update position label in modal header
     const lbl = document.getElementById("apply-position-label");
     if (lbl) {
@@ -365,13 +370,21 @@ function _validateStep2() {
     // Common required fields
     _req("apply-degree-type", "Degree type", errs);
     _req("apply-institution", "Institution", errs);
-    // _req("apply-referee-name", "Referee name", errs);
-    // _req("apply-referee-email", "Referee email", errs);
+
+    // Referee required fields
+    _req("apply-referee-name",  "Referee name",  errs);
+    _req("apply-referee-title", "Referee title", errs);
+    _req("apply-referee-email", "Referee email", errs);
 
     // Academic-only required fields
     if (isAcademic) {
         // _req("apply-degree-class", "Degree class", errs);
         _req("apply-year-awarded", "Year awarded", errs);
+    }
+
+    // Non-academic required fields
+    if (!isAcademic) {
+        _req("apply-post-qual-years", "Post qualification working experience", errs);
     }
 
     const rEmail = document.getElementById("apply-referee-email");
@@ -448,8 +461,9 @@ async function submitApplication(e) {
             publications:   parseInt(document.getElementById("apply-publications")?.value, 10) || 0,
         }
         : {
-            // Non-Academic: industry years only
-            industryYears: parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
+            // Non-Academic: industry years + post qualification years
+            industryYears:           parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
+            postQualificationYears:  parseInt(document.getElementById("apply-post-qual-years")?.value, 10) || 0,
         };
 
     /* ── professionalInfo ── */
@@ -462,20 +476,15 @@ async function submitApplication(e) {
         professionalCertifications: certsRaw ? certsRaw.split(",").map(s => s.trim()).filter(Boolean) : [],
     };
 
-    /* ── referees ── */
-    const referees = [];
-    const refName = document.getElementById("apply-referee-name")?.value.trim();
-    if (refName) {
-        referees.push({
-            name: refName,
-            title: document.getElementById("apply-referee-title")?.value.trim() || "",
-            institution: document.getElementById("apply-referee-institution")?.value.trim() || "",
-            email: document.getElementById("apply-referee-email")?.value.trim() || "",
-            phone: document.getElementById("apply-referee-phone")?.value.trim() || "",
-        });
-    }
+    /* ── referee (single object — backend requires referee.name, .title, .email) ── */
+    const referee = {
+        name:        document.getElementById("apply-referee-name")?.value.trim()        || "",
+        title:       document.getElementById("apply-referee-title")?.value.trim()       || "",
+        institution: document.getElementById("apply-referee-institution")?.value.trim() || "",
+        email:       document.getElementById("apply-referee-email")?.value.trim()       || "",
+        phone:       document.getElementById("apply-referee-phone")?.value.trim()       || "",
+    };
 
-    /* ── Build FormData (exact Postman field names) ── */
     const fd = new FormData();
     fd.append("jobId", jobId);
     fd.append("roleType", currentRoleType);
@@ -483,7 +492,7 @@ async function submitApplication(e) {
     fd.append("qualifications", JSON.stringify(qualifications));
     fd.append("experience", JSON.stringify(experience));
     fd.append("professionalInfo", JSON.stringify(professionalInfo));
-    fd.append("referees", JSON.stringify(referees));
+    fd.append("referee", JSON.stringify(referee));
 
     const coverFile = document.getElementById("apply-cover")?.files[0];
     if (coverFile) fd.append("coverLetter", coverFile);
