@@ -243,6 +243,59 @@ function toggleIctFields(checkbox) {
     }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   REFEREE 2 TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+function toggleReferee2() {
+    const wrap = document.getElementById("referee2-wrap");
+    const lbl  = document.getElementById("referee2-btn-label");
+    if (!wrap) return;
+
+    const isVisible = wrap.style.display === "block";
+    if (!isVisible) {
+        wrap.style.display = "block";
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+        requestAnimationFrame(() => {
+            wrap.style.opacity = "1";
+            wrap.style.transform = "translateY(0)";
+        });
+        if (lbl) lbl.textContent = "Remove Second Referee";
+    } else {
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        setTimeout(() => { wrap.style.display = "none"; }, 220);
+        if (lbl) lbl.textContent = "Add Second Referee";
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REFEREE 3 TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+function toggleReferee3() {
+    const wrap = document.getElementById("referee3-wrap");
+    const lbl  = document.getElementById("referee3-btn-label");
+    if (!wrap) return;
+
+    const isVisible = wrap.style.display === "block";
+    if (!isVisible) {
+        wrap.style.display = "block";
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+        requestAnimationFrame(() => {
+            wrap.style.opacity = "1";
+            wrap.style.transform = "translateY(0)";
+        });
+        if (lbl) lbl.textContent = "Remove Third Referee";
+    } else {
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        setTimeout(() => { wrap.style.display = "none"; }, 220);
+        if (lbl) lbl.textContent = "Add Third Referee";
+    }
+}
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -414,6 +467,17 @@ function _validateStep2() {
     validateEmail("apply-referee-email");
     validateEmail("apply-referee2-email");
     validateEmail("apply-referee3-email");
+
+    // Auto-open hidden wrappers if they contain errors
+    if (errs.some(e => e.includes('referee2'))) {
+        const wrap2 = document.getElementById("referee2-wrap");
+        if (wrap2 && wrap2.style.display !== "block") toggleReferee2();
+    }
+    if (errs.some(e => e.includes('referee3'))) {
+        const wrap3 = document.getElementById("referee3-wrap");
+        if (wrap3 && wrap3.style.display !== "block") toggleReferee3();
+    }
+
     if (errs.length) showToast("Please complete qualifications, experience, and referee details.", "warning");
     return errs.length === 0;
 }

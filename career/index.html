@@ -671,11 +671,18 @@
             </div>
 
             <!-- ── Add Referee 2 toggle ── -->
-            <div class="apply-field--full" style="grid-column:1/-1; display:none;">
+            <div class="apply-field--full" style="grid-column:1/-1;">
+              <button type="button" id="add-referee2-btn" onclick="toggleReferee2()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span id="referee2-btn-label">Add Second Referee</span>
+              </button>
             </div>
 
             <!-- ── REFEREE 2 ── -->
-            <div id="referee2-wrap" style="display:block;margin-top:4px;grid-column:1/-1;">
+            <div id="referee2-wrap" style="display:none;margin-top:4px;grid-column:1/-1;">
               <p class="referee-divider">Referee 2</p>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                 <div class="apply-field">
@@ -687,10 +694,21 @@
                   <input type="email" id="apply-referee2-email" placeholder="ref2@example.com" />
                 </div>
               </div>
+
+              <!-- ── Add Referee 3 toggle (inside Referee 2 panel) ── -->
+              <div style="margin-top:10px;">
+                <button type="button" id="add-referee3-btn" onclick="toggleReferee3()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <span id="referee3-btn-label">Add Third Referee</span>
+                </button>
+              </div>
             </div>
 
             <!-- ── REFEREE 3 ── -->
-            <div id="referee3-wrap" style="display:block;margin-top:4px;grid-column:1/-1;">
+            <div id="referee3-wrap" style="display:none;margin-top:4px;grid-column:1/-1;">
               <p class="referee-divider">Referee 3</p>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                 <div class="apply-field">
