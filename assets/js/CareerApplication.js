@@ -244,6 +244,72 @@ function toggleIctFields(checkbox) {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   REFEREE 2 TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+function toggleReferee2() {
+    const wrap = document.getElementById("referee2-wrap");
+    const lbl  = document.getElementById("referee2-btn-label");
+    if (!wrap) return;
+
+    const isVisible = wrap.style.display === "block";
+    if (!isVisible) {
+        wrap.style.display = "block";
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+        requestAnimationFrame(() => {
+            wrap.style.opacity = "1";
+            wrap.style.transform = "translateY(0)";
+        });
+        if (lbl) lbl.textContent = "Remove Second Referee";
+    } else {
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        setTimeout(() => { wrap.style.display = "none"; }, 220);
+        if (lbl) lbl.textContent = "Add Second Referee";
+        // Clear referee 2 fields
+        ["apply-referee2-name","apply-referee2-institution",
+         "apply-referee2-email","apply-referee2-phone"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REFEREE 3 TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+function toggleReferee3() {
+    const wrap = document.getElementById("referee3-wrap");
+    const lbl  = document.getElementById("referee3-btn-label");
+    if (!wrap) return;
+
+    const isVisible = wrap.style.display === "block";
+    if (!isVisible) {
+        wrap.style.display = "block";
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+        requestAnimationFrame(() => {
+            wrap.style.opacity = "1";
+            wrap.style.transform = "translateY(0)";
+        });
+        if (lbl) lbl.textContent = "Remove Third Referee";
+    } else {
+        wrap.style.opacity = "0";
+        wrap.style.transform = "translateY(-6px)";
+        setTimeout(() => { wrap.style.display = "none"; }, 220);
+        if (lbl) lbl.textContent = "Add Third Referee";
+        // Clear referee 3 fields
+        ["apply-referee3-name","apply-referee3-institution",
+         "apply-referee3-email","apply-referee3-phone"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
    ROLE TYPE TOGGLE
    ══════════════════════════════════════════════════════════════ */
 function setRoleType(type, skipFilter = false) {
@@ -373,7 +439,6 @@ function _validateStep2() {
 
     // Referee required fields
     _req("apply-referee-name",  "Referee name",  errs);
-    _req("apply-referee-title", "Referee title", errs);
     _req("apply-referee-email", "Referee email", errs);
 
     // Academic-only required fields
@@ -437,34 +502,32 @@ async function submitApplication(e) {
 
     /* ── qualifications ── */
     const degreeObj = {
-        degreeType: document.getElementById("apply-degree-type").value,
+        degreeType:  document.getElementById("apply-degree-type").value,
         institution: document.getElementById("apply-institution").value.trim(),
     };
     const degClass = document.getElementById("apply-degree-class").value;
     if (degClass) degreeObj.degreeClass = degClass;
-    
+
     const yrAwarded = document.getElementById("apply-year-awarded").value;
     if (yrAwarded) degreeObj.yearAwarded = parseInt(yrAwarded, 10);
+
+    // Department — only relevant for Academic
+    const deptVal = document.getElementById("apply-department")?.value;
+    if (deptVal) degreeObj.department = deptVal;
 
     const qualifications = {
         degrees: [degreeObj],
     };
 
-    /* ── experience ── */
+    /* ── experience — flat unified object matching backend schema ── */
     const isAcademic = currentRoleType === "academic";
-    const experience = isAcademic
-        ? {
-            // Academic: full experience set
-            teachingYears:  parseInt(document.getElementById("apply-teaching-years")?.value, 10) || 0,
-            researchYears:  parseInt(document.getElementById("apply-research-years")?.value, 10) || 0,
-            industryYears:  parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
-            publications:   parseInt(document.getElementById("apply-publications")?.value, 10) || 0,
-        }
-        : {
-            // Non-Academic: industry years + post qualification years
-            industryYears:           parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
-            postQualificationYears:  parseInt(document.getElementById("apply-post-qual-years")?.value, 10) || 0,
-        };
+    const experience = {
+        teachingYears:          parseInt(document.getElementById("apply-teaching-years")?.value,  10) || 0,
+        researchYears:          parseInt(document.getElementById("apply-research-years")?.value,  10) || 0,
+        industryYears:          parseInt(document.getElementById("apply-industry-years")?.value,  10) || 0,
+        scholarlyPublications:  parseInt(document.getElementById("apply-publications")?.value,    10) || 0,
+        yearsPostQualification: parseInt(document.getElementById("apply-post-qual-years")?.value, 10) || 0,
+    };
 
     /* ── professionalInfo ── */
     const ictChecked = document.getElementById("apply-ict-proficiency")?.checked || false;
@@ -476,23 +539,53 @@ async function submitApplication(e) {
         professionalCertifications: certsRaw ? certsRaw.split(",").map(s => s.trim()).filter(Boolean) : [],
     };
 
-    /* ── referee (single object — backend requires referee.name, .title, .email) ── */
-    const referee = {
+    /* ── referees — single array, all optional extras appended only if filled ── */
+    const ref1 = {
         name:        document.getElementById("apply-referee-name")?.value.trim()        || "",
-        title:       document.getElementById("apply-referee-title")?.value.trim()       || "",
+        title:       "",   // field removed from UI; kept for backend schema compatibility
         institution: document.getElementById("apply-referee-institution")?.value.trim() || "",
         email:       document.getElementById("apply-referee-email")?.value.trim()       || "",
         phone:       document.getElementById("apply-referee-phone")?.value.trim()       || "",
     };
 
+    const refereesArr = [ref1];
+
+    // Referee 2 — add to array if panel is open and has name or email
+    const ref2Wrap  = document.getElementById("referee2-wrap");
+    const ref2Name  = document.getElementById("apply-referee2-name")?.value.trim()  || "";
+    const ref2Email = document.getElementById("apply-referee2-email")?.value.trim() || "";
+    if (ref2Wrap?.style.display === "block" && (ref2Name || ref2Email)) {
+        refereesArr.push({
+            name:        ref2Name,
+            title:       "",
+            institution: document.getElementById("apply-referee2-institution")?.value.trim() || "",
+            email:       ref2Email,
+            phone:       document.getElementById("apply-referee2-phone")?.value.trim()       || "",
+        });
+    }
+
+    // Referee 3 — add to array if panel is open and has name or email
+    const ref3Wrap  = document.getElementById("referee3-wrap");
+    const ref3Name  = document.getElementById("apply-referee3-name")?.value.trim()  || "";
+    const ref3Email = document.getElementById("apply-referee3-email")?.value.trim() || "";
+    if (ref3Wrap?.style.display === "block" && (ref3Name || ref3Email)) {
+        refereesArr.push({
+            name:        ref3Name,
+            title:       "",
+            institution: document.getElementById("apply-referee3-institution")?.value.trim() || "",
+            email:       ref3Email,
+            phone:       document.getElementById("apply-referee3-phone")?.value.trim()       || "",
+        });
+    }
+
     const fd = new FormData();
     fd.append("jobId", jobId);
     fd.append("roleType", currentRoleType);
-    fd.append("personalInfo", JSON.stringify(personalInfo));
-    fd.append("qualifications", JSON.stringify(qualifications));
-    fd.append("experience", JSON.stringify(experience));
-    fd.append("professionalInfo", JSON.stringify(professionalInfo));
-    fd.append("referee", JSON.stringify(referee));
+    fd.append("personalInfo",    JSON.stringify(personalInfo));
+    fd.append("qualifications",  JSON.stringify(qualifications));
+    fd.append("experience",      JSON.stringify(experience));
+    fd.append("professionalInfo",JSON.stringify(professionalInfo));
+    fd.append("referees",        JSON.stringify(refereesArr));
 
     const coverFile = document.getElementById("apply-cover")?.files[0];
     if (coverFile) fd.append("coverLetter", coverFile);

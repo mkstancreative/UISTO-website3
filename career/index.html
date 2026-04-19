@@ -62,6 +62,77 @@
   <style>
     .academic-only.hidden { display: none !important; }
     .non-academic-only.hidden { display: none !important; }
+
+    /* ── Referee 2 toggle ──────────────────────────────── */
+    #referee2-wrap { display: none; grid-column: 1 / -1; }
+    #add-referee2-btn, #add-referee3-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: 1.5px dashed #c8d4e0; border-radius: 8px;
+      color: #1e3a5f; font-size: 12px; font-weight: 600;
+      padding: 6px 14px; cursor: pointer; margin: 4px 0 8px;
+      transition: border-color .18s, background .18s;
+    }
+    #add-referee2-btn:hover, #add-referee3-btn:hover { border-color: #1e3a5f; background: #f0f4fa; }
+    .referee-divider {
+      grid-column: 1 / -1;
+      font-weight: 600; color: #1e3a5f; font-size: 12px;
+      text-transform: uppercase; letter-spacing: .05em;
+      border-top: 1px dashed #dde6f0; padding-top: 10px; margin: 4px 0 2px;
+    }
+
+    /* ── Sub-Cadre Picker ────────────────────────────────── */
+    #subcadre-picker { display: none; margin-bottom: 6px; }
+    .subcadre-label {
+      font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: #1e3a5f; margin: 0 0 10px;
+    }
+    .subcadre-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+    .subcadre-card {
+      display: flex; flex-direction: column; align-items: flex-start;
+      gap: 2px; background: #f4f7fb; border: 1.5px solid #dde6f0;
+      border-radius: 8px; padding: 8px 10px 7px; cursor: pointer;
+      text-align: left; width: 100%;
+      transition: border-color .18s, background .18s, transform .15s, box-shadow .18s;
+    }
+    .subcadre-card:hover {
+      border-color: #1e3a5f; background: #eaf0f8;
+      transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30,58,95,.1);
+    }
+    .subcadre-card.active {
+      border-color: #c9a84c; background: #fdf8ee;
+      box-shadow: 0 0 0 3px rgba(201,168,76,.15);
+    }
+    .subcadre-card-icon { color: #1e3a5f; margin-bottom: 1px; }
+    .subcadre-card-icon svg { width: 16px; height: 16px; }
+    .subcadre-card-name  { font-size: 11.5px; font-weight: 700; color: #1e3a5f; line-height: 1.3; }
+    .subcadre-card-count { font-size: 10px; color: #6b7c93; }
+    .subcadre-card-arrow { color: #c9a84c; margin-top: auto; align-self: flex-end; }
+    .subcadre-card-arrow svg { width: 11px; height: 11px; }
+    .subcadre-loading {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: #6b7c93; padding: 6px 0;
+    }
+    .subcadre-spinner {
+      display: inline-block; width: 18px; height: 18px; flex-shrink: 0;
+      border: 2.5px solid #c8d4e0; border-top-color: #1e3a5f;
+      border-radius: 50%; animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .subcadre-empty { font-size: 13px; color: #6b7c93; padding: 6px 0; margin: 0; }
+
+    /* ── Back button ─────────────────────────────────────── */
+    #subcadre-back-btn {
+      display: none; align-items: center; gap: 6px;
+      background: none; border: 1.5px solid #c8d4e0; border-radius: 8px;
+      color: #1e3a5f; font-size: 12px; font-weight: 600;
+      padding: 5px 12px; cursor: pointer; margin-bottom: 10px;
+      transition: border-color .18s, background .18s;
+    }
+    #subcadre-back-btn:hover { border-color: #1e3a5f; background: #f0f4fa; }
   </style>
 </head>
 
@@ -292,29 +363,51 @@
 
           <!-- Job Position Selector -->
           <div class="job-selector-wrap">
-            <div class="apply-field apply-field--full">
-              <label for="apply-job-select">Select Position <span class="req-star">*</span></label>
-              <select id="apply-job-select" onchange="onJobSelect(this.value)">
-                <option value="">-- Select a position to apply for --</option>
-              </select>
+
+            <!-- ── NON-ACADEMIC: Sub-Cadre picker (layer 1) ── -->
+            <div id="subcadre-picker">
+              <p class="subcadre-label">Select a category</p>
+              <div class="subcadre-grid" id="subcadre-grid"></div>
             </div>
-            <!-- Selected job preview card -->
-            <div class="job-preview-card" id="job-preview-card" style="display:none">
-              <div class="job-preview-top">
-                <div class="job-preview-info">
-                  <span class="job-preview-title" id="job-preview-title"></span>
-                  <span class="job-preview-dept" id="job-preview-dept"></span>
-                  <small><strong style="color: #c9a84c">Requirements</strong></small>
-                  <ul class="job-preview-dept" id="job-preview-reqs"></ul>
+
+            <!-- ── Position select (layer 2 for Non-Academic, always for Academic) ── -->
+            <div id="job-select-wrap">
+
+              <!-- Back to categories (Non-Academic only) -->
+              <button type="button" id="subcadre-back-btn" onclick="backToSubCadres()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                  <path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back:&nbsp;<span class="back-btn-label">categories</span>
+              </button>
+
+              <div class="apply-field apply-field--full">
+                <label for="apply-job-select">Select Position <span class="req-star">*</span></label>
+                <select id="apply-job-select" onchange="onJobSelect(this.value)">
+                  <option value="" disabled selected hidden>-- Select a position to apply for --</option>
+                </select>
+              </div>
+
+              <!-- Selected job preview card -->
+              <div class="job-preview-card" id="job-preview-card" style="display:none">
+                <div class="job-preview-top">
+                  <div class="job-preview-info">
+                    <span class="job-preview-title" id="job-preview-title"></span>
+                    <span class="job-preview-dept" id="job-preview-dept"></span>
+                    <small><strong style="color: #c9a84c">Requirements</strong></small>
+                    <ul class="job-preview-dept" id="job-preview-reqs"></ul>
+                  </div>
+                  <span class="job-preview-badge" id="job-preview-cadre"></span>
                 </div>
-                <span class="job-preview-badge" id="job-preview-cadre"></span>
+                <div class="job-preview-meta">
+                  <span id="job-preview-deadline"></span>
+                </div>
               </div>
-              <div class="job-preview-meta">
-                <span id="job-preview-deadline"></span>
-                <!-- <span id="job-preview-reqs"></span> -->
-              </div>
-            </div>
-          </div>
+
+            </div><!-- /#job-select-wrap -->
+
+          </div><!-- /.job-selector-wrap -->
 
           <div class="apply-form-grid">
 
@@ -446,6 +539,48 @@
               <input type="number" id="apply-year-awarded" placeholder="e.g. 2018" min="1950" max="2030" />
             </div>
 
+            <div class="apply-field academic-only" id="field-department">
+              <label for="apply-department">Department / Programme <span class="req-star">*</span></label>
+              <select id="apply-department">
+                <option value="" disabled selected hidden>Select department</option>
+                <option>Accounting</option>
+                <option>Advertising</option>
+                <option>Agriculture</option>
+                <option>Architecture</option>
+                <option>Biology</option>
+                <option>Building</option>
+                <option>Business Administration</option>
+                <option>Business Information Technology</option>
+                <option>Chemistry</option>
+                <option>Clothing &amp; Textile</option>
+                <option>Computer Science</option>
+                <option>Cyber Security</option>
+                <option>Data Science</option>
+                <option>Economics</option>
+                <option>Employment Relations and Human Resource Management</option>
+                <option>English</option>
+                <option>Entrepreneurship</option>
+                <option>Estate Management</option>
+                <option>Fashion Design</option>
+                <option>Film &amp; Multimedia Studies</option>
+                <option>French</option>
+                <option>Furniture Design</option>
+                <option>Igbo</option>
+                <option>Information &amp; Media Studies</option>
+                <option>Information and Communication Technology</option>
+                <option>Interior Architecture &amp; Design</option>
+                <option>Logistics &amp; Supply Chain Technology</option>
+                <option>Marketing</option>
+                <option>Mathematics</option>
+                <option>Microbiology</option>
+                <option>Office &amp; Information Management</option>
+                <option>Philosophy</option>
+                <option>Physics</option>
+                <option>Software Engineering</option>
+                <option>Statistics</option>
+              </select>
+            </div>
+
             <p class="apply-field--full"
               style="font-weight:600;color:#1e3a5f;margin:10px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.05em">
               Experience (years)</p>
@@ -495,15 +630,13 @@
 
             <p class="apply-field--full"
               style="font-weight:600;color:#1e3a5f;margin:10px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;">
-              Referee</p>
+              Referees</p>
 
-              <div class="apply-field">
+            <!-- ── REFEREE 1 ── -->
+            <p class="referee-divider">Referee 1</p>
+            <div class="apply-field">
               <label for="apply-referee-name">Name <span class="req-star">*</span></label>
               <input type="text" id="apply-referee-name" placeholder="e.g. Dr. John Doe" />
-            </div>
-            <div class="apply-field">
-              <label for="apply-referee-title">Title <span class="req-star">*</span></label>
-              <input type="text" id="apply-referee-title" placeholder="e.g. Senior Lecturer" />
             </div>
             <div class="apply-field">
               <label for="apply-referee-institution">Institution</label>
@@ -516,6 +649,75 @@
             <div class="apply-field">
               <label for="apply-referee-phone">Phone</label>
               <input type="tel" id="apply-referee-phone" placeholder="e.g. 08098765432" />
+            </div>
+
+            <!-- ── Add Referee 2 toggle ── -->
+            <div class="apply-field--full" style="grid-column:1/-1">
+              <button type="button" id="add-referee2-btn" onclick="toggleReferee2()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span id="referee2-btn-label">Add Second Referee</span>
+              </button>
+            </div>
+
+            <!-- ── REFEREE 2 (hidden, toggled) ── -->
+            <div id="referee2-wrap">
+              <p class="referee-divider">Referee 2</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="apply-field">
+                  <label for="apply-referee2-name">Name</label>
+                  <input type="text" id="apply-referee2-name" placeholder="e.g. Prof. Amara Obi" />
+                </div>
+                <div class="apply-field">
+                  <label for="apply-referee2-institution">Institution</label>
+                  <input type="text" id="apply-referee2-institution" placeholder="e.g. UNILAG" />
+                </div>
+                <div class="apply-field">
+                  <label for="apply-referee2-email">Email</label>
+                  <input type="email" id="apply-referee2-email" placeholder="ref2@example.com" />
+                </div>
+                <div class="apply-field">
+                  <label for="apply-referee2-phone">Phone</label>
+                  <input type="tel" id="apply-referee2-phone" placeholder="e.g. 08012345678" />
+                </div>
+              </div>
+
+              <!-- ── Add Referee 3 toggle (inside Referee 2 panel) ── -->
+              <div style="margin-top:10px;">
+                <button type="button" id="add-referee3-btn" onclick="toggleReferee3()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <span id="referee3-btn-label">Add Third Referee</span>
+                </button>
+              </div>
+
+              <!-- ── REFEREE 3 (hidden, toggled) ── -->
+              <div id="referee3-wrap" style="display:none;margin-top:4px;">
+                <p class="referee-divider">Referee 3</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="apply-field">
+                    <label for="apply-referee3-name">Name</label>
+                    <input type="text" id="apply-referee3-name" placeholder="e.g. Dr. Nkechi Eze" />
+                  </div>
+                  <div class="apply-field">
+                    <label for="apply-referee3-institution">Institution</label>
+                    <input type="text" id="apply-referee3-institution" placeholder="e.g. IMSU" />
+                  </div>
+                  <div class="apply-field">
+                    <label for="apply-referee3-email">Email</label>
+                    <input type="email" id="apply-referee3-email" placeholder="ref3@example.com" />
+                  </div>
+                  <div class="apply-field">
+                    <label for="apply-referee3-phone">Phone</label>
+                    <input type="tel" id="apply-referee3-phone" placeholder="e.g. 08055556666" />
+                  </div>
+                </div>
+              </div>
+
             </div>
 
           </div>
