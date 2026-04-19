@@ -194,7 +194,7 @@ function _appendJobOption(sel, j) {
     opt.textContent     = j.position?.title || "Position";
     opt.dataset.cadre   = j.position?.cadre      || "";
     opt.dataset.faculty = j.position?.faculty    || "";
-    opt.dataset.dept    = j.position?.department || "";
+    // opt.dataset.dept    = j.position?.department || "";
     opt.dataset.deadline = j.applicationDeadline || "";
     opt.dataset.reqs    = JSON.stringify(j.position?.requirements || []);
     sel.appendChild(opt);
@@ -223,8 +223,8 @@ function onJobSelect(selectedId) {
 
     /* Populate preview card */
     document.getElementById("job-preview-title").textContent = opt.textContent;
-    document.getElementById("job-preview-dept").textContent  =
-        [opt.dataset.faculty, opt.dataset.dept].filter(Boolean).join(" · ") || "";
+    // document.getElementById("job-preview-dept").textContent  =
+    //     [opt.dataset.faculty, opt.dataset.dept].filter(Boolean).join(" · ") || "";
     document.getElementById("job-preview-cadre").textContent = cadreRaw;
     document.getElementById("job-preview-cadre").className   =
         "job-preview-badge" + (cadreKey === "academic" ? " badge-academic-type" : " badge-nonacdemic-type");

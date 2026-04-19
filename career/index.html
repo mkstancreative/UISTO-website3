@@ -474,8 +474,6 @@
                 <option value="" disabled selected hidden>Select status</option>
                 <option value="single">Single</option>
                 <option value="married">Married</option>
-                <option value="divorced">Divorced</option>
-                <option value="widowed">Widowed</option>
               </select>
             </div>
 
@@ -580,6 +578,7 @@
                 <option>Information &amp; Media Studies</option>
                 <option>Information and Communication Technology</option>
                 <option>Interior Architecture &amp; Design</option>
+                <option>Library Science</option>
                 <option>Logistics &amp; Supply Chain Technology</option>
                 <option>Marketing</option>
                 <option>Mathematics</option>
@@ -672,56 +671,37 @@
             </div>
 
             <!-- ── Add Referee 2 toggle ── -->
-            <div class="apply-field--full" style="grid-column:1/-1">
-              <button type="button" id="add-referee2-btn" onclick="toggleReferee2()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span id="referee2-btn-label">Add Second Referee</span>
-              </button>
+            <div class="apply-field--full" style="grid-column:1/-1; display:none;">
             </div>
 
-            <!-- ── REFEREE 2 (hidden, toggled) ── -->
-            <div id="referee2-wrap">
+            <!-- ── REFEREE 2 ── -->
+            <div id="referee2-wrap" style="display:block;margin-top:4px;grid-column:1/-1;">
               <p class="referee-divider">Referee 2</p>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                 <div class="apply-field">
-                  <label for="apply-referee2-name">Name</label>
+                  <label for="apply-referee2-name">Name <span class="req-star">*</span></label>
                   <input type="text" id="apply-referee2-name" placeholder="e.g. Prof. Amara Obi" />
                 </div>
                 <div class="apply-field">
-                  <label for="apply-referee2-email">Email</label>
+                  <label for="apply-referee2-email">Email <span class="req-star">*</span></label>
                   <input type="email" id="apply-referee2-email" placeholder="ref2@example.com" />
                 </div>
               </div>
+            </div>
 
-              <!-- ── Add Referee 3 toggle (inside Referee 2 panel) ── -->
-              <div style="margin-top:10px;">
-                <button type="button" id="add-referee3-btn" onclick="toggleReferee3()">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                  <span id="referee3-btn-label">Add Third Referee</span>
-                </button>
-              </div>
-
-              <!-- ── REFEREE 3 (hidden, toggled) ── -->
-              <div id="referee3-wrap" style="display:none;margin-top:4px;">
-                <p class="referee-divider">Referee 3</p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                  <div class="apply-field">
-                    <label for="apply-referee3-name">Name</label>
-                    <input type="text" id="apply-referee3-name" placeholder="e.g. Dr. Nkechi Eze" />
-                  </div>
-                  <div class="apply-field">
-                    <label for="apply-referee3-email">Email</label>
-                    <input type="email" id="apply-referee3-email" placeholder="ref3@example.com" />
-                  </div>
+            <!-- ── REFEREE 3 ── -->
+            <div id="referee3-wrap" style="display:block;margin-top:4px;grid-column:1/-1;">
+              <p class="referee-divider">Referee 3</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="apply-field">
+                  <label for="apply-referee3-name">Name <span class="req-star">*</span></label>
+                  <input type="text" id="apply-referee3-name" placeholder="e.g. Dr. Nkechi Eze" />
+                </div>
+                <div class="apply-field">
+                  <label for="apply-referee3-email">Email <span class="req-star">*</span></label>
+                  <input type="email" id="apply-referee3-email" placeholder="ref3@example.com" />
                 </div>
               </div>
-
             </div>
 
           </div>

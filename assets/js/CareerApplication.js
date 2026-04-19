@@ -243,71 +243,7 @@ function toggleIctFields(checkbox) {
     }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   REFEREE 2 TOGGLE
-   ══════════════════════════════════════════════════════════════ */
-function toggleReferee2() {
-    const wrap = document.getElementById("referee2-wrap");
-    const lbl  = document.getElementById("referee2-btn-label");
-    if (!wrap) return;
 
-    const isVisible = wrap.style.display === "block";
-    if (!isVisible) {
-        wrap.style.display = "block";
-        wrap.style.opacity = "0";
-        wrap.style.transform = "translateY(-6px)";
-        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
-        requestAnimationFrame(() => {
-            wrap.style.opacity = "1";
-            wrap.style.transform = "translateY(0)";
-        });
-        if (lbl) lbl.textContent = "Remove Second Referee";
-    } else {
-        wrap.style.opacity = "0";
-        wrap.style.transform = "translateY(-6px)";
-        setTimeout(() => { wrap.style.display = "none"; }, 220);
-        if (lbl) lbl.textContent = "Add Second Referee";
-        // Clear referee 2 fields
-        ["apply-referee2-name","apply-referee2-institution",
-         "apply-referee2-email","apply-referee2-phone"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = "";
-        });
-    }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   REFEREE 3 TOGGLE
-   ══════════════════════════════════════════════════════════════ */
-function toggleReferee3() {
-    const wrap = document.getElementById("referee3-wrap");
-    const lbl  = document.getElementById("referee3-btn-label");
-    if (!wrap) return;
-
-    const isVisible = wrap.style.display === "block";
-    if (!isVisible) {
-        wrap.style.display = "block";
-        wrap.style.opacity = "0";
-        wrap.style.transform = "translateY(-6px)";
-        wrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
-        requestAnimationFrame(() => {
-            wrap.style.opacity = "1";
-            wrap.style.transform = "translateY(0)";
-        });
-        if (lbl) lbl.textContent = "Remove Third Referee";
-    } else {
-        wrap.style.opacity = "0";
-        wrap.style.transform = "translateY(-6px)";
-        setTimeout(() => { wrap.style.display = "none"; }, 220);
-        if (lbl) lbl.textContent = "Add Third Referee";
-        // Clear referee 3 fields
-        ["apply-referee3-name","apply-referee3-institution",
-         "apply-referee3-email","apply-referee3-phone"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = "";
-        });
-    }
-}
 
 /* ══════════════════════════════════════════════════════════════
    ROLE TYPE TOGGLE
@@ -449,13 +385,19 @@ function _validateStep2() {
     _req("apply-institution", "Institution", errs);
 
     // Referee required fields
-    _req("apply-referee-name",  "Referee name",  errs);
-    _req("apply-referee-email", "Referee email", errs);
+    _req("apply-referee-name",  "Referee 1 name",  errs);
+    _req("apply-referee-email", "Referee 1 email", errs);
+
+    _req("apply-referee2-name",  "Referee 2 name",  errs);
+    _req("apply-referee2-email", "Referee 2 email", errs);
+
+    _req("apply-referee3-name",  "Referee 3 name",  errs);
+    _req("apply-referee3-email", "Referee 3 email", errs);
 
     // Academic-only required fields
     if (isAcademic) {
-        // _req("apply-degree-class", "Degree class", errs);
         _req("apply-year-awarded", "Year awarded", errs);
+        _req("apply-department", "Department / Programme", errs);
     }
 
     // Non-academic required fields
@@ -463,10 +405,15 @@ function _validateStep2() {
         _req("apply-post-qual-years", "Post qualification working experience", errs);
     }
 
-    const rEmail = document.getElementById("apply-referee-email");
-    if (rEmail?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rEmail.value)) {
-        _showErr("apply-referee-email", "Enter a valid referee email."); errs.push("apply-referee-email");
-    }
+    const validateEmail = (id) => {
+        const el = document.getElementById(id);
+        if (el?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) {
+            _showErr(id, "Enter a valid referee email."); errs.push(id);
+        }
+    };
+    validateEmail("apply-referee-email");
+    validateEmail("apply-referee2-email");
+    validateEmail("apply-referee3-email");
     if (errs.length) showToast("Please complete qualifications, experience, and referee details.", "warning");
     return errs.length === 0;
 }
@@ -565,27 +512,21 @@ async function submitApplication(e) {
 
     const refereesArr = [ref1];
 
-    // Referee 2 — add to array if panel is open and has name or email
-    const ref2Wrap  = document.getElementById("referee2-wrap");
+    // Referee 2
     const ref2Name  = document.getElementById("apply-referee2-name")?.value.trim()  || "";
     const ref2Email = document.getElementById("apply-referee2-email")?.value.trim() || "";
-    if (ref2Wrap?.style.display === "block" && (ref2Name || ref2Email)) {
-        refereesArr.push({
-            name:        ref2Name,
-            email:       ref2Email,
-        });
-    }
+    refereesArr.push({
+        name:        ref2Name,
+        email:       ref2Email,
+    });
 
-    // Referee 3 — add to array if panel is open and has name or email
-    const ref3Wrap  = document.getElementById("referee3-wrap");
+    // Referee 3
     const ref3Name  = document.getElementById("apply-referee3-name")?.value.trim()  || "";
     const ref3Email = document.getElementById("apply-referee3-email")?.value.trim() || "";
-    if (ref3Wrap?.style.display === "block" && (ref3Name || ref3Email)) {
-        refereesArr.push({
-            name:        ref3Name,
-            email:       ref3Email,
-        });
-    }
+    refereesArr.push({
+        name:        ref3Name,
+        email:       ref3Email,
+    });
 
     const fd = new FormData();
     fd.append("jobId", jobId);
