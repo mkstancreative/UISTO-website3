@@ -413,6 +413,15 @@ function _req(id, label, errors) {
 
 function _validateStep1() {
     const errs = [];
+
+    const jobId = document.getElementById("apply-position-id")?.value?.trim();
+    if (!jobId) {
+        _showErr("apply-job-select", "Position is required.");
+        errs.push("apply-job-select");
+    } else {
+        _clearErr("apply-job-select");
+    }
+
     _req("apply-firstname", "First name", errs);
     _req("apply-lastname", "Last name", errs);
     _req("apply-dob", "Date of birth", errs);
@@ -420,6 +429,8 @@ function _validateStep1() {
     _req("apply-email", "Email address", errs);
     _req("apply-state", "State", errs);
     _req("apply-lga", "LGA", errs);
+    _req("apply-gender", "Gender", errs);
+    _req("apply-marital", "Marital Status", errs);
     _req("apply-address", "Home address", errs);
     const em = document.getElementById("apply-email");
     if (em?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)) {
@@ -498,6 +509,8 @@ async function submitApplication(e) {
         email: document.getElementById("apply-email").value.trim(),
         phone: document.getElementById("apply-phone").value.trim(),
         dateOfBirth: document.getElementById("apply-dob").value,
+        gender: document.getElementById("apply-gender")?.value,
+        maritalStatus: document.getElementById("apply-marital")?.value,
     };
 
     /* ── qualifications ── */
@@ -517,6 +530,8 @@ async function submitApplication(e) {
 
     const qualifications = {
         degrees: [degreeObj],
+        hasPhd: degreeObj.degreeType === "PhD",
+        nysc: { completed: document.getElementById("apply-nysc")?.checked || false }
     };
 
     /* ── experience — flat unified object matching backend schema ── */
@@ -525,7 +540,7 @@ async function submitApplication(e) {
         teachingYears:          parseInt(document.getElementById("apply-teaching-years")?.value,  10) || 0,
         researchYears:          parseInt(document.getElementById("apply-research-years")?.value,  10) || 0,
         industryYears:          parseInt(document.getElementById("apply-industry-years")?.value,  10) || 0,
-        scholarlyPublications:  parseInt(document.getElementById("apply-publications")?.value,    10) || 0,
+        publications:           parseInt(document.getElementById("apply-publications")?.value,    10) || 0,
         yearsPostQualification: parseInt(document.getElementById("apply-post-qual-years")?.value, 10) || 0,
     };
 
@@ -533,19 +548,19 @@ async function submitApplication(e) {
     const ictChecked = document.getElementById("apply-ict-proficiency")?.checked || false;
     const compRaw = document.getElementById("apply-computer-skills")?.value || "";
     const certsRaw = document.getElementById("apply-prof-certs")?.value || "";
+    const corenChecked = document.getElementById("apply-coren")?.checked || false;
     const professionalInfo = {
+        hasCOREN: corenChecked,
+        corenNumber: document.getElementById("apply-coren-number")?.value.trim() || "",
         ictProficiency: ictChecked,
-        computerLiteracy: compRaw ? compRaw.split(",").map(s => s.trim()).filter(Boolean) : [],
-        professionalCertifications: certsRaw ? certsRaw.split(",").map(s => s.trim()).filter(Boolean) : [],
+        computerSkills: compRaw ? compRaw.split(",").map(s => s.trim()).filter(Boolean) : [],
+        certifications: certsRaw ? certsRaw.split(",").map(s => s.trim()).filter(Boolean) : [],
     };
 
     /* ── referees — single array, all optional extras appended only if filled ── */
     const ref1 = {
         name:        document.getElementById("apply-referee-name")?.value.trim()        || "",
-        title:       "",   // field removed from UI; kept for backend schema compatibility
-        institution: document.getElementById("apply-referee-institution")?.value.trim() || "",
         email:       document.getElementById("apply-referee-email")?.value.trim()       || "",
-        phone:       document.getElementById("apply-referee-phone")?.value.trim()       || "",
     };
 
     const refereesArr = [ref1];
@@ -557,10 +572,7 @@ async function submitApplication(e) {
     if (ref2Wrap?.style.display === "block" && (ref2Name || ref2Email)) {
         refereesArr.push({
             name:        ref2Name,
-            title:       "",
-            institution: document.getElementById("apply-referee2-institution")?.value.trim() || "",
             email:       ref2Email,
-            phone:       document.getElementById("apply-referee2-phone")?.value.trim()       || "",
         });
     }
 
@@ -571,10 +583,7 @@ async function submitApplication(e) {
     if (ref3Wrap?.style.display === "block" && (ref3Name || ref3Email)) {
         refereesArr.push({
             name:        ref3Name,
-            title:       "",
-            institution: document.getElementById("apply-referee3-institution")?.value.trim() || "",
             email:       ref3Email,
-            phone:       document.getElementById("apply-referee3-phone")?.value.trim()       || "",
         });
     }
 
