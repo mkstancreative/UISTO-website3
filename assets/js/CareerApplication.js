@@ -122,6 +122,9 @@ function openApplyModal() {
 function closeApplyModal() {
     document.getElementById("apply-overlay").classList.remove("active");
     document.body.style.overflow = "";
+    // Reset success panel so modal is clean on next open
+    document.getElementById("apply-success")?.classList.remove("active");
+    _goto(1);
 }
 
 /* ══════════════════════════════════════════════════════════════
