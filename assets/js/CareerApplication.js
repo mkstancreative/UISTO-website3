@@ -651,4 +651,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("career-apply-form");
     if (form) form.addEventListener("submit", submitApplication);
     _goto(1);
+
+    /* ── Block click-outside-to-close on both modals ──────── */
+    // Clicking the overlay backdrop does nothing — user must use the ✕ button
+    ["apply-overlay", "status-overlay"].forEach(id => {
+        const overlay = document.getElementById(id);
+        if (!overlay) return;
+        // Do NOT close when the backdrop (overlay itself) is clicked
+        overlay.addEventListener("click", e => e.stopPropagation());
+    });
+
+    // Also stop clicks inside the modal panels from bubbling out
+    document.querySelectorAll(".apply-modal").forEach(modal => {
+        modal.addEventListener("click", e => e.stopPropagation());
+    });
 });

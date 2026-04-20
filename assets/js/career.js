@@ -268,7 +268,5 @@ function onRoleTypeFilterChange(type) {
    INIT
    ════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("apply-overlay")?.addEventListener("click", function (e) {
-        if (e.target === this) closeApplyModal();
-    });
+    // Click-outside-to-close intentionally disabled — use the ✕ button to close.
 });
