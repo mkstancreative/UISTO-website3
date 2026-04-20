@@ -3,6 +3,10 @@
 
 const REF_API = "https://career.uisto.edu.ng/api/v1/";
 
+/* ── Current submission mode ─────────────────────────────── */
+let currentMode = "text"; // "text" | "upload"
+let quillEditor = null;
+
 /* ── Helpers ─────────────────────────────────────────────── */
 function qs(id) { return document.getElementById(id); }
 
@@ -40,6 +44,21 @@ function showState(name) {
   qs("main-form").style.display = name ? "none" : "block";
   if (name === null) qs("main-form").style.display = "block"; // show form
 }
+
+/* ── Mode tab switcher (global, called from HTML onclick) ── */
+window.switchMode = function switchMode(mode) {
+  currentMode = mode;
+
+  // Tabs
+  qs("tab-text").classList.toggle("active", mode === "text");
+  qs("tab-upload").classList.toggle("active", mode === "upload");
+  qs("tab-text").setAttribute("aria-selected", mode === "text");
+  qs("tab-upload").setAttribute("aria-selected", mode === "upload");
+
+  // Panels
+  qs("panel-text").classList.toggle("active", mode === "text");
+  qs("panel-upload").classList.toggle("active", mode === "upload");
+};
 
 /* ── Token from URL ──────────────────────────────────────── */
 function getToken() {
@@ -99,32 +118,47 @@ async function submitReference(e) {
   const token = getToken();
   if (!token) { showToast("Missing referee token.", "error"); return; }
 
-  const referenceText = qs("ref-text").value.trim();
-  if (!referenceText) {
-    showToast("Please write your reference before submitting.", "warning");
-    qs("ref-text").focus();
-    return;
-  }
-
-  // Word limit guard
-  const wordCount = referenceText.split(/\s+/).filter(Boolean).length;
-  if (wordCount > 1000) {
-    showToast(`Your reference exceeds 1000 words (${wordCount} words). Please shorten it.`, "error");
-    qs("ref-text").focus();
-    return;
-  }
-
-  const referenceFile = qs("ref-file").files[0] || null;
-
-  // File size guard (10 MB)
-  if (referenceFile && referenceFile.size > 10 * 1024 * 1024) {
-    showToast("File is too large. Maximum size is 10 MB.", "error");
-    return;
-  }
-
   const fd = new FormData();
-  fd.append("referenceText", referenceText);
-  if (referenceFile) fd.append("referenceFile", referenceFile);
+
+  if (currentMode === "text") {
+    // ── Text editor mode: get plain text + HTML from Quill
+    const plainText = quillEditor ? quillEditor.getText().trim() : "";
+    const htmlText  = quillEditor ? quillEditor.getSemanticHTML() : "";
+
+    if (!plainText) {
+      showToast("Please write your reference before submitting.", "warning");
+      quillEditor && quillEditor.focus();
+      return;
+    }
+
+    // Word limit guard
+    const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+    if (wordCount > 1000) {
+      showToast(`Your reference exceeds 1000 words (${wordCount} words). Please shorten it.`, "error");
+      quillEditor && quillEditor.focus();
+      return;
+    }
+
+    fd.append("referenceText", plainText);
+    fd.append("referenceTextHtml", htmlText);
+
+  } else {
+    // ── Upload mode: must have a file
+    const referenceFile = qs("ref-file").files[0] || null;
+
+    if (!referenceFile) {
+      showToast("Please upload your reference document before submitting.", "warning");
+      return;
+    }
+
+    // File size guard (10 MB)
+    if (referenceFile.size > 10 * 1024 * 1024) {
+      showToast("File is too large. Maximum size is 10 MB.", "error");
+      return;
+    }
+
+    fd.append("referenceFile", referenceFile);
+  }
 
   const btn = qs("submit-btn");
   const origHTML = btn.innerHTML;
@@ -158,20 +192,66 @@ async function submitReference(e) {
   }
 }
 
+/* ── Quill initialisation ────────────────────────────────── */
+function setupQuillEditor() {
+  const LIMIT = 1000;
+  const counter = qs("word-count");
+
+  quillEditor = new Quill("#ref-editor", {
+    theme: "snow",
+    placeholder: "Write your reference here — include your professional assessment of the applicant's skills, character, work ethic, and suitability for the role…",
+    modules: {
+      toolbar: [
+        [{ header: [false, 2, 3] }],
+        ["bold", "italic", "underline"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["blockquote"],
+        ["clean"],
+      ],
+    },
+  });
+
+  // Live word count
+  quillEditor.on("text-change", () => {
+    const text  = quillEditor.getText().trim();
+    const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+    const remaining = LIMIT - words;
+    counter.textContent = remaining < 0 ? 0 : remaining;
+    counter.classList.toggle("warn", remaining >= 0 && remaining <= 100);
+    counter.classList.toggle("over", remaining < 0);
+  });
+
+  // Focus ring helper
+  const wrapper = qs("ref-editor-wrapper");
+  quillEditor.on("selection-change", range => {
+    wrapper.classList.toggle("ql-editor-focused-wrapper", !!range);
+  });
+}
+
 /* ── File label update ───────────────────────────────────── */
 function setupFileInput() {
-  const input = qs("ref-file");
-  const zone  = qs("ref-file-zone");
-  const label = qs("ref-file-label");
+  const input    = qs("ref-file");
+  const zone     = qs("ref-file-zone");
+  const label    = qs("ref-file-label");
+  const fnBox    = qs("drop-filename");
+  const fnText   = qs("drop-filename-text");
 
-  input.addEventListener("change", () => {
-    if (input.files?.length) {
-      label.textContent = input.files[0].name;
+  function applyFile(file) {
+    if (file) {
+      label.textContent = "File selected — click to replace";
       zone.classList.add("has-file");
+      fnBox.classList.add("visible");
+      fnText.textContent = file.name;
     } else {
       label.textContent = "Click to upload or drag & drop";
       zone.classList.remove("has-file");
+      fnBox.classList.remove("visible");
+      fnText.textContent = "";
     }
+  }
+
+  input.addEventListener("change", () => {
+    applyFile(input.files?.[0] || null);
   });
 
   // Drag-and-drop
@@ -182,25 +262,14 @@ function setupFileInput() {
     zone.style.borderColor = "";
     const files = e.dataTransfer.files;
     if (files.length) {
+      // Only accept PDF
+      if (!files[0].name.toLowerCase().endsWith(".pdf")) {
+        showToast("Only PDF files are accepted.", "warning");
+        return;
+      }
       input.files = files;
-      label.textContent = files[0].name;
-      zone.classList.add("has-file");
+      applyFile(files[0]);
     }
-  });
-}
-
-/* ── Word count countdown ──────────────────────────── */
-function setupWordCount() {
-  const LIMIT   = 1000;
-  const textarea = qs("ref-text");
-  const counter  = qs("word-count");
-
-  textarea.addEventListener("input", () => {
-    const words     = textarea.value.trim().split(/\s+/).filter(Boolean).length;
-    const remaining = LIMIT - words;
-    counter.textContent = remaining < 0 ? 0 : remaining;
-    counter.classList.toggle("warn", remaining >= 0 && remaining <= 100);
-    counter.classList.toggle("over", remaining < 0);
   });
 }
 
@@ -216,14 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // File input
   setupFileInput();
 
-  // Word count
-  setupWordCount();
-
-  // "HERE" link opens the file picker
-  const attachLink = qs("attach-link");
-  if (attachLink) {
-    attachLink.addEventListener("click", () => qs("ref-file").click());
-  }
+  // Quill editor
+  setupQuillEditor();
 
   // Load data
   const token = getToken();
