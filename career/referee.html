@@ -48,6 +48,7 @@
       --pill-bdr:    rgba(255,255,255,.07);
       --intro-bg:    rgba(201,168,76,.06);
       --intro-text:  #d8e4f0;
+      --highlight:   #e0bc6e;
       --drop-bg:     rgba(255,255,255,.02);
       --note-bg:     rgba(201,168,76,.06);
       --note-bdr:    rgba(201,168,76,.18);
@@ -72,8 +73,9 @@
       --ql-picker:   #ffffff;
       --pill-bg:     rgba(30,58,95,.05);
       --pill-bdr:    rgba(30,58,95,.12);
-      --intro-bg:    rgba(180,140,40,.18);
-      --intro-text:  #1e3a5f;
+      --intro-bg:    #f0e2b0;
+      --intro-text:  #1a2e10;
+      --highlight:   #7a5c00;
       --drop-bg:     #f8fafc;
       --note-bg:     rgba(201,168,76,.08);
       --note-bdr:    rgba(201,168,76,.3);
@@ -501,7 +503,7 @@
       margin-bottom: 12px;
     }
     .intro-letter .highlight {
-      color: var(--gold2);
+      color: var(--highlight, var(--gold2));
       font-weight: 600;
     }
 
