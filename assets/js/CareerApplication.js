@@ -534,6 +534,11 @@ function _validateStep1() {
     _showErr("apply-nin", "NIN must be exactly 11 digits.");
     errs.push("apply-nin");
   }
+  // Academic-only: Department is on Step 1 — validate it here
+  if (currentRoleType === "academic") {
+    _req("apply-department", "Department", errs);
+  }
+
   if (errs.length)
     showToast("Please complete all required personal details.", "warning");
   return errs.length === 0;
@@ -568,7 +573,6 @@ function _validateStep2() {
   // Academic-only required fields
   if (isAcademic) {
     _req("apply-year-awarded", "Year awarded", errs);
-    _req("apply-department", "Department / Programme", errs);
     _req("apply-teaching-years", "Teaching years", errs);
     _req("apply-research-years", "Research years", errs);
     _req("apply-publications", "Number of publications", errs);
