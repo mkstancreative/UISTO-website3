@@ -71,7 +71,7 @@ function showToast(message, type = "info") {
 async function loadNigerianStates() {
   const sel = document.getElementById("apply-state");
   if (!sel) return;
-  sel.innerHTML = `<option value="">Loading states…</option>`;
+  sel.innerHTML = `<option value="" disabled selected hidden>Loading states…</option>`;
   try {
     const res = await fetch(`${COUNTRIES_API}/countries/states`, {
       method: "POST",
@@ -80,7 +80,7 @@ async function loadNigerianStates() {
     });
     const json = await res.json();
     if (json.error || !json.data?.states) throw new Error();
-    sel.innerHTML = `<option value="">Select State</option>`;
+    sel.innerHTML = `<option value="" disabled selected hidden>Select State</option>`;
     json.data.states.forEach((s) => {
       const o = document.createElement("option");
       o.value = s.name;
@@ -88,16 +88,16 @@ async function loadNigerianStates() {
       sel.appendChild(o);
     });
   } catch {
-    sel.innerHTML = `<option value="">Error loading states</option>`;
+    sel.innerHTML = `<option value="" disabled selected hidden>Error loading states</option>`;
   }
 }
 
 async function onStateChange() {
   const stateName = document.getElementById("apply-state").value;
   const lgaSel = document.getElementById("apply-lga");
-  lgaSel.innerHTML = `<option value="">Loading LGAs…</option>`;
+  lgaSel.innerHTML = `<option value="" disabled selected hidden>Loading LGAs…</option>`;
   if (!stateName) {
-    lgaSel.innerHTML = `<option value="">Select LGA</option>`;
+    lgaSel.innerHTML = `<option value="" disabled selected hidden>Select LGA</option>`;
     return;
   }
   try {
@@ -108,7 +108,7 @@ async function onStateChange() {
     });
     const json = await res.json();
     if (json.error || !json.data) throw new Error();
-    lgaSel.innerHTML = `<option value="">Select LGA</option>`;
+    lgaSel.innerHTML = `<option value="" disabled selected hidden>Select LGA</option>`;
     json.data.forEach((city) => {
       const o = document.createElement("option");
       o.value = city;
@@ -116,7 +116,7 @@ async function onStateChange() {
       lgaSel.appendChild(o);
     });
   } catch {
-    lgaSel.innerHTML = `<option value="">Error loading LGAs</option>`;
+    lgaSel.innerHTML = `<option value="" disabled selected hidden>Error loading LGAs</option>`;
   }
 }
 
@@ -499,6 +499,22 @@ function _validateStep1() {
   _req("apply-firstname", "First name", errs);
   _req("apply-lastname", "Last name", errs);
   _req("apply-dob", "Date of birth", errs);
+  // DOB age range: 18–65 years
+  const dobEl = document.getElementById("apply-dob");
+  if (dobEl?.value) {
+    const dob = new Date(dobEl.value);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    if (age < 18) {
+      _showErr("apply-dob", "Applicant must be at least 18 years old.");
+      errs.push("apply-dob");
+    } else if (age > 65) {
+      _showErr("apply-dob", "Applicant must not be older than 65 years.");
+      errs.push("apply-dob");
+    }
+  }
   _req("apply-phone", "Phone number", errs);
   _req("apply-email", "Email address", errs);
   _req("apply-state", "State", errs);
@@ -531,6 +547,14 @@ function _validateStep2() {
   _req("apply-degree-type", "Degree type", errs);
   _req("apply-institution", "Institution", errs);
 
+  // Programme & PhD field — required for ALL applicants
+  _req("apply-programme", "Programme", errs);
+  // PhD degree field required for all when PhD is selected
+  const degType = document.getElementById("apply-degree-type")?.value;
+  if (degType === "PhD") {
+    _req("apply-phd-degree", "PhD Degree Field", errs);
+  }
+
   // Referee required fields
   _req("apply-referee-name", "Referee 1 name", errs);
   _req("apply-referee-email", "Referee 1 email", errs);
@@ -545,6 +569,9 @@ function _validateStep2() {
   if (isAcademic) {
     _req("apply-year-awarded", "Year awarded", errs);
     _req("apply-department", "Department / Programme", errs);
+    _req("apply-teaching-years", "Teaching years", errs);
+    _req("apply-research-years", "Research years", errs);
+    _req("apply-publications", "Number of publications", errs);
   }
 
   // Non-academic required fields
@@ -555,6 +582,9 @@ function _validateStep2() {
       errs,
     );
   }
+
+  // Industry years — mandatory for all
+  _req("apply-industry-years", "Years of industry experience", errs);
 
   const validateEmail = (id) => {
     const el = document.getElementById(id);
@@ -648,6 +678,14 @@ async function submitApplication(e) {
   const yrAwarded = document.getElementById("apply-year-awarded").value;
   if (yrAwarded) degreeObj.yearAwarded = parseInt(yrAwarded, 10);
 
+  // Programme — for all applicants
+  const progVal = document.getElementById("apply-programme")?.value;
+  if (progVal) degreeObj.programme = progVal;
+
+  // PhD degree field — shown only when PhD + programme selected
+  const phdField = document.getElementById("apply-phd-degree")?.value;
+  if (phdField) degreeObj.phdDegreeField = phdField;
+
   // Department — only relevant for Academic
   const deptVal = document.getElementById("apply-department")?.value;
   if (deptVal) degreeObj.department = deptVal;
@@ -681,11 +719,7 @@ async function submitApplication(e) {
     document.getElementById("apply-ict-proficiency")?.checked || false;
   const compRaw = document.getElementById("apply-computer-skills")?.value || "";
   const certsRaw = document.getElementById("apply-prof-certs")?.value || "";
-  const corenChecked = document.getElementById("apply-coren")?.checked || false;
   const professionalInfo = {
-    hasCOREN: corenChecked,
-    corenNumber:
-      document.getElementById("apply-coren-number")?.value.trim() || "",
     ictProficiency: ictChecked,
     computerSkills: compRaw
       ? compRaw
@@ -789,6 +823,16 @@ function _showSuccess() {
    INIT
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", () => {
+  // Set DOB age limits dynamically (18–65 years)
+  const dobInput = document.getElementById("apply-dob");
+  if (dobInput) {
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    const minDate = new Date(today.getFullYear() - 65, today.getMonth(), today.getDate());
+    dobInput.max = maxDate.toISOString().split("T")[0];
+    dobInput.min = minDate.toISOString().split("T")[0];
+  }
+
   loadNigerianStates();
   const form = document.getElementById("career-apply-form");
   if (form) form.addEventListener("submit", submitApplication);
@@ -808,3 +852,98 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.addEventListener("click", (e) => e.stopPropagation());
   });
 });
+
+/* ══════════════════════════════════════════════════════════════
+   PHD DEGREE FIELD — per-programme PhD options
+   ══════════════════════════════════════════════════════════════ */
+const PHD_MAP = {
+  "Accounting": { core: "Accounting", related: ["Finance", "Taxation", "Auditing", "Financial Management"] },
+  "Advertising": { core: "Advertising", related: ["Marketing", "Mass Communication", "Media Studies", "Integrated Marketing Communication"] },
+  "Agriculture": { core: "Agriculture / Agricultural Science", related: ["Agronomy", "Animal Science", "Soil Science", "Agricultural Economics", "Crop Science"] },
+  "Architecture": { core: "Architecture", related: ["Environmental Design", "Urban & Regional Planning", "Building Technology"] },
+  "Biology": { core: "Biology", related: ["Botany", "Zoology", "Genetics", "Ecology", "Molecular Biology"] },
+  "Building": { core: "Building", related: ["Construction Management", "Quantity Surveying", "Civil Engineering"] },
+  "Business Administration": { core: "Business Administration", related: ["Management", "Strategic Management", "Organizational Behaviour"] },
+  "Business Information Technology": { core: "Business Information Systems / IT Management", related: ["Information Systems", "Computer Science", "MIS"] },
+  "Chemistry": { core: "Chemistry", related: ["Industrial Chemistry", "Biochemistry", "Materials Science"] },
+  "Clothing & Textile": { core: "Textile Science / Clothing & Textile", related: ["Fashion Design", "Home Economics", "Apparel Technology"] },
+  "Computer Science": { core: "Computer Science", related: ["Software Engineering", "Information Systems", "Artificial Intelligence"] },
+  "Cyber Security": { core: "Cyber Security", related: ["Computer Science", "Information Security", "Digital Forensics"] },
+  "Data Science": { core: "Data Science", related: ["Statistics", "Computer Science", "AI", "Machine Learning"] },
+  "Economics": { core: "Economics", related: ["Development Economics", "Econometrics", "Financial Economics"] },
+  "Employment Relations & HRM": { core: "Human Resource Management / Industrial Relations", related: ["Labour Studies", "Organizational Behaviour", "Business Administration"] },
+  "English": { core: "English / English Studies", related: ["Linguistics", "Literature in English", "Applied Linguistics"] },
+  "Entrepreneurship": { core: "Entrepreneurship", related: ["Business Administration", "Innovation Studies", "SME Development"] },
+  "Estate Management": { core: "Estate Management", related: ["Property Valuation", "Real Estate", "Urban Planning"] },
+  "Fashion Design": { core: "Fashion Design", related: ["Textile Science", "Clothing & Textile", "Creative Arts"] },
+  "Film & Multimedia Studies": { core: "Film Studies / Multimedia Studies", related: ["Mass Communication", "Media Studies", "Theatre Arts"] },
+  "French": { core: "French", related: ["Linguistics", "Translation Studies", "Comparative Literature"] },
+  "Furniture Design": { core: "Furniture Design", related: ["Industrial Design", "Wood Technology", "Interior Design"] },
+  "Igbo": { core: "Igbo Language", related: ["Linguistics", "African Languages", "Literature"] },
+  "Information & Media Studies": { core: "Information & Media Studies", related: ["Mass Communication", "Library & Information Science"] },
+  "ICT": { core: "Information & Communication Technology", related: ["Computer Science", "Information Systems", "Telecommunications"] },
+  "Interior Architecture & Design": { core: "Interior Architecture", related: ["Architecture", "Environmental Design", "Fine Arts"] },
+  "Library & Information Science": { core: "Library and Information Science (LIS)", related: ["Information Science", "Knowledge Management", "Archival Studies", "Records & Information Management", "Digital Libraries", "Information Systems"] },
+  "Logistics & Supply Chain Technology": { core: "Logistics / Supply Chain Management", related: ["Operations Management", "Transport Management", "Industrial Engineering"] },
+  "Marketing": { core: "Marketing", related: ["Consumer Behaviour", "Advertising", "Business Administration"] },
+  "Mathematics": { core: "Mathematics", related: ["Applied Mathematics", "Pure Mathematics", "Mathematical Physics"] },
+  "Microbiology": { core: "Microbiology", related: ["Biotechnology", "Virology", "Immunology"] },
+  "Office & Information Management": { core: "Office Management / Information Management", related: ["Business Education", "Information Systems"] },
+  "Philosophy": { core: "Philosophy", related: ["Ethics", "Logic", "Religious Studies"] },
+  "Physics": { core: "Physics", related: ["Applied Physics", "Nuclear Physics", "Electronics"] },
+  "Software Engineering": { core: "Software Engineering", related: ["Computer Science", "Information Systems"] },
+  "Statistics": { core: "Statistics", related: ["Biostatistics", "Data Science", "Mathematics"] },
+};
+
+function onProgrammeOrDegreeChange() {
+  const degType = document.getElementById("apply-degree-type")?.value;
+  const programme = document.getElementById("apply-programme")?.value;
+  const phdWrap = document.getElementById("field-phd-degree");
+  const phdSel  = document.getElementById("apply-phd-degree");
+  if (!phdWrap || !phdSel) return;
+
+  if (degType === "PhD" && programme && PHD_MAP[programme]) {
+    const map = PHD_MAP[programme];
+    phdSel.innerHTML = `<option value="" disabled selected hidden>Select PhD degree field</option>`;
+    // Core option (bold-labelled via optgroup)
+    const coreGrp = document.createElement("optgroup");
+    coreGrp.label = "Core PhD";
+    const coreOpt = document.createElement("option");
+    coreOpt.value = map.core;
+    coreOpt.textContent = map.core;
+    coreGrp.appendChild(coreOpt);
+    phdSel.appendChild(coreGrp);
+    // Related options
+    if (map.related.length) {
+      const relGrp = document.createElement("optgroup");
+      relGrp.label = "Related PhDs";
+      map.related.forEach((r) => {
+        const o = document.createElement("option");
+        o.value = r;
+        o.textContent = r;
+        relGrp.appendChild(o);
+      });
+      phdSel.appendChild(relGrp);
+    }
+    // Show with animation
+    phdWrap.style.display = "block";
+    phdWrap.style.opacity = "0";
+    phdWrap.style.transform = "translateY(-6px)";
+    phdWrap.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+    requestAnimationFrame(() => {
+      phdWrap.style.opacity = "1";
+      phdWrap.style.transform = "translateY(0)";
+    });
+  } else {
+    phdWrap.style.opacity = "0";
+    phdWrap.style.transform = "translateY(-6px)";
+    setTimeout(() => {
+      phdWrap.style.display = "none";
+      phdSel.innerHTML = `<option value="" disabled selected hidden>Select PhD degree field</option>`;
+    }, 220);
+  }
+}
+
+function onPhdDegreeFieldChange() {
+  // placeholder — future logic if needed
+}

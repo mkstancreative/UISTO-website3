@@ -29,22 +29,74 @@
       --card:   rgba(19,34,54,.85);
       --radius: 14px;
       --shadow: 0 20px 60px rgba(0,0,0,.45);
+      /* theme tokens */
+      --bg:          #0d1b2a;
+      --surface:     rgba(19,34,54,.85);
+      --surface2:    rgba(255,255,255,.04);
+      --text:        #ffffff;
+      --text-muted:  #8a9ab0;
+      --label:       #c8d4e0;
+      --topbar-bg:   rgba(13,27,42,.95);
+      --footer-col:  rgba(138,154,176,.5);
+      --footer-bdr:  rgba(255,255,255,.05);
+      --ql-bg:       rgba(255,255,255,.03);
+      --ql-toolbar:  rgba(255,255,255,.04);
+      --ql-text:     #ffffff;
+      --ql-ph:       rgba(255,255,255,.25);
+      --ql-picker:   #1a2d44;
+      --pill-bg:     rgba(255,255,255,.04);
+      --pill-bdr:    rgba(255,255,255,.07);
+      --intro-bg:    rgba(201,168,76,.06);
+      --intro-text:  #d8e4f0;
+      --drop-bg:     rgba(255,255,255,.02);
+      --note-bg:     rgba(201,168,76,.06);
+      --note-bdr:    rgba(201,168,76,.18);
+      --note-text:   #c8d4e0;
+    }
+
+    /* ── Light mode overrides ── */
+    [data-theme="light"] {
+      --bg:          #f0f4f9;
+      --surface:     rgba(255,255,255,.96);
+      --surface2:    rgba(30,58,95,.04);
+      --text:        #0d1b2a;
+      --text-muted:  #5a6e85;
+      --label:       #1e3a5f;
+      --topbar-bg:   rgba(255,255,255,.96);
+      --footer-col:  #8a9ab0;
+      --footer-bdr:  rgba(30,58,95,.1);
+      --ql-bg:       #ffffff;
+      --ql-toolbar:  #f5f7fa;
+      --ql-text:     #0d1b2a;
+      --ql-ph:       rgba(13,27,42,.3);
+      --ql-picker:   #ffffff;
+      --pill-bg:     rgba(30,58,95,.05);
+      --pill-bdr:    rgba(30,58,95,.12);
+      --intro-bg:    rgba(201,168,76,.08);
+      --intro-text:  #1e3a5f;
+      --drop-bg:     #f8fafc;
+      --note-bg:     rgba(201,168,76,.08);
+      --note-bdr:    rgba(201,168,76,.3);
+      --note-text:   #1e3a5f;
+      --shadow:      0 20px 60px rgba(0,0,0,.1);
+      --border:      rgba(201,168,76,.3);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--navy);
-      color: var(--white);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background .3s, color .3s;
     }
 
     /* ── Top bar ── */
     .ref-topbar {
-      background: rgba(13,27,42,.95);
+      background: var(--topbar-bg);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       padding: 0 32px;
@@ -55,6 +107,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      transition: background .3s, border-color .3s;
     }
     .ref-topbar img { height: 44px; }
     .ref-topbar-label {
@@ -114,16 +167,17 @@
       font-family: 'Poppins', sans-serif;
       font-size: 22px; font-weight: 700;
     }
-    .state-sub { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 480px; }
+    .state-sub { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 480px; }
 
     /* ── Applicant card ── */
     .applicant-card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 28px 32px;
       margin-bottom: 28px;
       backdrop-filter: blur(16px);
+      transition: background .3s, border-color .3s;
     }
     .applicant-card-label {
       font-size: 11px;
@@ -138,6 +192,7 @@
       font-size: 22px;
       font-weight: 700;
       margin-bottom: 6px;
+      color: var(--text);
     }
     .applicant-meta {
       display: flex;
@@ -150,32 +205,35 @@
       align-items: center;
       gap: 7px;
       font-size: 13px;
-      color: var(--muted);
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.07);
+      color: var(--text-muted);
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-bdr);
       border-radius: 20px;
       padding: 5px 13px;
+      transition: background .3s, border-color .3s;
     }
     .meta-pill svg { flex-shrink: 0; }
 
     /* ── Form card ── */
     .form-card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px;
       backdrop-filter: blur(16px);
       box-shadow: var(--shadow);
+      transition: background .3s, border-color .3s, box-shadow .3s;
     }
     .form-card-title {
       font-family: 'Poppins', sans-serif;
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 6px;
+      color: var(--text);
     }
     .form-card-sub {
       font-size: 13px;
-      color: var(--muted);
+      color: var(--text-muted);
       margin-bottom: 28px;
       line-height: 1.6;
     }
@@ -186,7 +244,7 @@
       display: block;
       font-size: 13px;
       font-weight: 600;
-      color: #c8d4e0;
+      color: var(--label);
       margin-bottom: 8px;
       letter-spacing: .02em;
     }
@@ -235,44 +293,46 @@
     .mode-panel { display: none; }
     .mode-panel.active { display: block; }
 
-    /* ── Quill editor override for dark theme ── */
+    /* ── Quill editor override — adapts to theme ── */
     .ql-toolbar.ql-snow {
-      background: rgba(255,255,255,.04) !important;
+      background: var(--ql-toolbar) !important;
       border: 1px solid rgba(201,168,76,.25) !important;
       border-bottom: 1px solid rgba(201,168,76,.12) !important;
       border-radius: 10px 10px 0 0 !important;
       padding: 10px 12px !important;
+      transition: background .3s;
     }
     .ql-container.ql-snow {
-      background: rgba(255,255,255,.03) !important;
+      background: var(--ql-bg) !important;
       border: 1px solid rgba(201,168,76,.25) !important;
       border-top: none !important;
       border-radius: 0 0 10px 10px !important;
       font-family: 'Inter', sans-serif !important;
       font-size: 14px !important;
-      color: var(--white) !important;
+      color: var(--ql-text) !important;
       min-height: 240px;
+      transition: background .3s;
     }
     .ql-editor {
       min-height: 240px;
       line-height: 1.75 !important;
-      color: var(--white) !important;
+      color: var(--ql-text) !important;
       padding: 16px !important;
     }
     .ql-editor.ql-blank::before {
-      color: rgba(255,255,255,.25) !important;
+      color: var(--ql-ph) !important;
       font-style: normal !important;
       font-family: 'Inter', sans-serif !important;
     }
-    .ql-snow .ql-stroke { stroke: var(--muted) !important; }
-    .ql-snow .ql-fill  { fill: var(--muted) !important; }
-    .ql-snow .ql-picker-label { color: var(--muted) !important; }
+    .ql-snow .ql-stroke { stroke: var(--text-muted) !important; }
+    .ql-snow .ql-fill  { fill: var(--text-muted) !important; }
+    .ql-snow .ql-picker-label { color: var(--text-muted) !important; }
     .ql-snow .ql-picker-options {
-      background: #1a2d44 !important;
+      background: var(--ql-picker) !important;
       border: 1px solid rgba(201,168,76,.2) !important;
       border-radius: 8px !important;
     }
-    .ql-snow .ql-picker-item { color: #c8d4e0 !important; }
+    .ql-snow .ql-picker-item { color: var(--label) !important; }
     .ql-snow button:hover .ql-stroke,
     .ql-snow .ql-active .ql-stroke { stroke: var(--gold) !important; }
     .ql-snow button:hover .ql-fill,
@@ -306,7 +366,7 @@
     }
     .word-count-num.warn  { color: #ffc107; }
     .word-count-num.over  { color: #dc3545; }
-    .word-count-label { color: var(--muted); }
+    .word-count-label { color: var(--text-muted); }
 
     /* ── File drop zone ── */
     .file-group { margin-top: 4px; }
@@ -321,7 +381,7 @@
       padding: 48px 20px;
       cursor: pointer;
       transition: border-color .2s, background .2s;
-      background: rgba(255,255,255,.02);
+      background: var(--drop-bg);
       text-align: center;
     }
     .file-group label.drop-zone:hover {
@@ -336,12 +396,13 @@
     .drop-icon { color: var(--gold); opacity: .7; }
     .drop-text {
       font-size: 14px;
-      color: var(--muted);
+      color: var(--text-muted);
       font-weight: 500;
     }
     .drop-hint {
       font-size: 12px;
-      color: rgba(138,154,176,.6);
+      color: var(--text-muted);
+      opacity: .6;
     }
     .drop-filename {
       font-size: 13px;
@@ -358,16 +419,17 @@
     /* ── Upload info note ── */
     .upload-note {
       margin-top: 14px;
-      background: rgba(201,168,76,.06);
-      border: 1px solid rgba(201,168,76,.18);
+      background: var(--note-bg);
+      border: 1px solid var(--note-bdr);
       border-radius: 10px;
       padding: 14px 16px;
       font-size: 13px;
-      color: #c8d4e0;
+      color: var(--note-text);
       line-height: 1.6;
       display: flex;
       gap: 10px;
       align-items: flex-start;
+      transition: background .3s, border-color .3s, color .3s;
     }
     .upload-note svg { flex-shrink: 0; margin-top: 1px; color: var(--gold); }
 
@@ -420,7 +482,7 @@
 
     /* ── Intro letter ── */
     .intro-letter {
-      background: rgba(201,168,76,.06);
+      background: var(--intro-bg);
       border: 1px solid rgba(201,168,76,.25);
       border-left: 4px solid var(--gold);
       border-radius: var(--radius);
@@ -428,11 +490,12 @@
       margin-bottom: 28px;
       line-height: 1.8;
       font-size: 15px;
-      color: #d8e4f0;
+      color: var(--intro-text);
+      transition: background .3s, color .3s;
     }
     .intro-letter .salutation {
       font-weight: 700;
-      color: var(--white);
+      color: var(--text);
       font-family: 'Poppins', sans-serif;
       font-size: 16px;
       margin-bottom: 12px;
@@ -446,10 +509,53 @@
     .ref-footer {
       text-align: center;
       padding: 24px;
-      color: rgba(138,154,176,.5);
+      color: var(--footer-col);
       font-size: 12px;
-      border-top: 1px solid rgba(255,255,255,.05);
+      border-top: 1px solid var(--footer-bdr);
+      transition: color .3s, border-color .3s;
     }
+
+    /* ── Dark/Light mode toggle button ── */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 7px 14px 7px 10px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: background .25s, border-color .25s, color .25s, transform .15s;
+      white-space: nowrap;
+    }
+    .theme-toggle:hover {
+      background: rgba(201,168,76,.1);
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-1px);
+    }
+    .theme-toggle svg {
+      flex-shrink: 0;
+      transition: transform .4s ease;
+    }
+    .theme-toggle:hover svg { transform: rotate(20deg); }
+    /* icon swap — use .theme-toggle scope for higher specificity */
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon { display: none; }
+    /* dark mode (default): show moon */
+    html:not([data-theme="light"]) .theme-toggle .icon-moon { display: block; }
+    /* light mode: show sun */
+    html[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
+    html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+    /* label swap */
+    .theme-toggle .toggle-label-dark,
+    .theme-toggle .toggle-label-light { display: none; }
+    html:not([data-theme="light"]) .theme-toggle .toggle-label-dark  { display: inline; }
+    html[data-theme="light"] .theme-toggle .toggle-label-light { display: inline; }
 
     /* ── Toast ── */
     #toast-container {
@@ -471,7 +577,22 @@
   <!-- Top bar -->
   <div class="ref-topbar">
     <a href="../index"><img src="../assets/img/logo2.png" alt="UISTO Logo" /></a>
-    <span class="ref-topbar-label">Referee Portal</span>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="ref-topbar-label">Referee Portal</span>
+      <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle colour theme">
+        <!-- Moon icon (shown in dark mode) -->
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <!-- Sun icon (shown in light mode) -->
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="toggle-label-dark">Light Mode</span>
+        <span class="toggle-label-light">Dark Mode</span>
+      </button>
+    </div>
   </div>
 
   <div class="ref-page">
@@ -627,5 +748,25 @@
   <!-- Quill JS -->
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   <script src="../assets/js/career-referee.js"></script>
+
+  <script>
+    /* ── Theme toggle ── */
+    (function () {
+      const saved = localStorage.getItem('uisto-ref-theme') || 'dark';
+      if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isLight = html.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('uisto-ref-theme', 'dark');
+      } else {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('uisto-ref-theme', 'light');
+      }
+    }
+  </script>
 </body>
 </html>
