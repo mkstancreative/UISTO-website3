@@ -556,7 +556,7 @@ function _validateStep2() {
   _req("apply-programme", "Programme", errs);
   // PhD degree field required for all when PhD is selected
   const degType = document.getElementById("apply-degree-type")?.value;
-  if (degType === "PhD") {
+  if (degType === "phd") {
     _req("apply-phd-degree", "PhD Degree Field", errs);
   }
 
@@ -696,7 +696,7 @@ async function submitApplication(e) {
 
   const qualifications = {
     degrees: [degreeObj],
-    hasPhd: degreeObj.degreeType === "PhD",
+    hasPhd: degreeObj.degreeType === "phd",
     nysc: {
       completed: document.getElementById("apply-nysc")?.checked || false,
     },
@@ -713,7 +713,7 @@ async function submitApplication(e) {
       parseInt(document.getElementById("apply-industry-years")?.value, 10) || 0,
     publications:
       parseInt(document.getElementById("apply-publications")?.value, 10) || 0,
-    yearsPostQualification:
+    postQualificationExperience:
       parseInt(document.getElementById("apply-post-qual-years")?.value, 10) ||
       0,
   };
@@ -769,7 +769,11 @@ async function submitApplication(e) {
 
   const fd = new FormData();
   fd.append("jobId", jobId);
-  fd.append("roleType", currentRoleType);
+  // Top-level department (Academic applicants)
+  const topDept = document.getElementById("apply-department")?.value || "";
+  if (topDept) fd.append("department", topDept);
+  // Top-level email (required by backend)
+  fd.append("email", personalInfo.email);
   fd.append("personalInfo", JSON.stringify(personalInfo));
   fd.append("qualifications", JSON.stringify(qualifications));
   fd.append("experience", JSON.stringify(experience));
@@ -785,32 +789,100 @@ async function submitApplication(e) {
   const docFile = document.getElementById("apply-docs")?.files[0];
   if (docFile) fd.append("supportingDocument", docFile);
 
-  /* ── Submit ── */
+  /* ── Submit with upload progress ── */
   const submitBtn = document.querySelector(".apply-submit-btn[type='submit']");
-  const origHTML = submitBtn?.innerHTML;
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<span class="btn-spinner" style="margin-right:8px; border-top-color:#fff;"></span> Uploading & Submitting...`;
+  const origHTML  = submitBtn?.innerHTML;
+
+  // Inject a progress bar below the submit button (once)
+  let progressWrap = document.getElementById("upload-progress-wrap");
+  if (!progressWrap) {
+    progressWrap = document.createElement("div");
+    progressWrap.id = "upload-progress-wrap";
+    progressWrap.style.cssText = [
+      "margin-top:12px", "display:none", "flex-direction:column",
+      "gap:6px", "width:100%"
+    ].join(";");
+    progressWrap.innerHTML = `
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7c93;font-weight:600;">
+        <span id="upload-progress-label">Uploading files…</span>
+        <span id="upload-progress-pct">0%</span>
+      </div>
+      <div style="background:#dde6f0;border-radius:99px;height:6px;overflow:hidden;">
+        <div id="upload-progress-bar"
+             style="height:100%;width:0%;background:linear-gradient(90deg,#1e3a5f,#c9a84c);
+                    border-radius:99px;transition:width 0.2s ease;"></div>
+      </div>`;
+    submitBtn?.parentElement?.appendChild(progressWrap);
   }
 
-  try {
-    const res = await fetch(`${APP_API_URL}applications/apply`, {
-      method: "POST",
-      body: fd,
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
-    showToast("Application submitted! We'll be in touch.", "success");
-    _showSuccess();
-  } catch (err) {
-    console.error("Submit error:", err);
-    showToast(`Submission failed: ${err.message}`, "error");
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = origHTML;
-    }
+  const progBar   = document.getElementById("upload-progress-bar");
+  const progPct   = document.getElementById("upload-progress-pct");
+  const progLabel = document.getElementById("upload-progress-label");
+
+  const setProgress = (pct, label) => {
+    if (progBar)   progBar.style.width   = `${pct}%`;
+    if (progPct)   progPct.textContent   = `${Math.round(pct)}%`;
+    if (progLabel) progLabel.textContent = label || "Uploading files…";
+  };
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="btn-spinner" style="margin-right:8px;border-top-color:#fff;display:block"></span> Uploading…`;
   }
+  progressWrap.style.display = "flex";
+  setProgress(0, "Preparing upload…");
+
+  // Use XHR so we get upload progress events
+  await new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        const pct = (e.loaded / e.total) * 95; // cap at 95% until server responds
+        setProgress(pct, pct < 50 ? "Uploading files…" : "Almost there…");
+      }
+    });
+
+    xhr.addEventListener("load", () => {
+      setProgress(100, "Processing…");
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300 && data.success !== false) {
+          showToast("Application submitted! We'll be in touch.", "success");
+          _showSuccess();
+        } else {
+          const errMsg = [data.message, data.error].filter(Boolean).join(" — ");
+          showToast(`Submission failed: ${errMsg || `Error ${xhr.status}`}`, "error");
+          console.error("Server error:", data);
+        }
+      } catch {
+        showToast(`Submission failed: Unexpected server response.`, "error");
+      }
+      // Reset UI
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHTML; }
+      progressWrap.style.display = "none";
+      setProgress(0);
+      resolve();
+    });
+
+    xhr.addEventListener("error", () => {
+      showToast("Network error. Please check your connection and try again.", "error");
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHTML; }
+      progressWrap.style.display = "none";
+      resolve();
+    });
+
+    xhr.addEventListener("timeout", () => {
+      showToast("Request timed out. Please try again.", "error");
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHTML; }
+      progressWrap.style.display = "none";
+      resolve();
+    });
+
+    xhr.open("POST", `${APP_API_URL}applications/apply`);
+    xhr.timeout = 120000; // 2-minute timeout for large files
+    xhr.send(fd);
+  });
 }
 
 function _showSuccess() {
@@ -859,44 +931,129 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ══════════════════════════════════════════════════════════════
    PHD DEGREE FIELD — per-programme PhD options
+   Keys match snake_case option values; core/related use {value, label}
    ══════════════════════════════════════════════════════════════ */
 const PHD_MAP = {
-  "Accounting": { core: "Accounting", related: ["Finance", "Taxation", "Auditing", "Financial Management"] },
-  "Advertising": { core: "Advertising", related: ["Marketing", "Mass Communication", "Media Studies", "Integrated Marketing Communication"] },
-  "Agriculture": { core: "Agriculture / Agricultural Science", related: ["Agronomy", "Animal Science", "Soil Science", "Agricultural Economics", "Crop Science"] },
-  "Architecture": { core: "Architecture", related: ["Environmental Design", "Urban & Regional Planning", "Building Technology"] },
-  "Biology": { core: "Biology", related: ["Botany", "Zoology", "Genetics", "Ecology", "Molecular Biology"] },
-  "Building": { core: "Building", related: ["Construction Management", "Quantity Surveying", "Civil Engineering"] },
-  "Business Administration": { core: "Business Administration", related: ["Management", "Strategic Management", "Organizational Behaviour"] },
-  "Business Information Technology": { core: "Business Information Systems / IT Management", related: ["Information Systems", "Computer Science", "MIS"] },
-  "Chemistry": { core: "Chemistry", related: ["Industrial Chemistry", "Biochemistry", "Materials Science"] },
-  "Clothing & Textile": { core: "Textile Science / Clothing & Textile", related: ["Fashion Design", "Home Economics", "Apparel Technology"] },
-  "Computer Science": { core: "Computer Science", related: ["Software Engineering", "Information Systems", "Artificial Intelligence"] },
-  "Cyber Security": { core: "Cyber Security", related: ["Computer Science", "Information Security", "Digital Forensics"] },
-  "Data Science": { core: "Data Science", related: ["Statistics", "Computer Science", "AI", "Machine Learning"] },
-  "Economics": { core: "Economics", related: ["Development Economics", "Econometrics", "Financial Economics"] },
-  "Employment Relations & HRM": { core: "Human Resource Management / Industrial Relations", related: ["Labour Studies", "Organizational Behaviour", "Business Administration"] },
-  "English": { core: "English / English Studies", related: ["Linguistics", "Literature in English", "Applied Linguistics"] },
-  "Entrepreneurship": { core: "Entrepreneurship", related: ["Business Administration", "Innovation Studies", "SME Development"] },
-  "Estate Management": { core: "Estate Management", related: ["Property Valuation", "Real Estate", "Urban Planning"] },
-  "Fashion Design": { core: "Fashion Design", related: ["Textile Science", "Clothing & Textile", "Creative Arts"] },
-  "Film & Multimedia Studies": { core: "Film Studies / Multimedia Studies", related: ["Mass Communication", "Media Studies", "Theatre Arts"] },
-  "French": { core: "French", related: ["Linguistics", "Translation Studies", "Comparative Literature"] },
-  "Furniture Design": { core: "Furniture Design", related: ["Industrial Design", "Wood Technology", "Interior Design"] },
-  "Igbo": { core: "Igbo Language", related: ["Linguistics", "African Languages", "Literature"] },
-  "Information & Media Studies": { core: "Information & Media Studies", related: ["Mass Communication", "Library & Information Science"] },
-  "ICT": { core: "Information & Communication Technology", related: ["Computer Science", "Information Systems", "Telecommunications"] },
-  "Interior Architecture & Design": { core: "Interior Architecture", related: ["Architecture", "Environmental Design", "Fine Arts"] },
-  "Library & Information Science": { core: "Library and Information Science (LIS)", related: ["Information Science", "Knowledge Management", "Archival Studies", "Records & Information Management", "Digital Libraries", "Information Systems"] },
-  "Logistics & Supply Chain Technology": { core: "Logistics / Supply Chain Management", related: ["Operations Management", "Transport Management", "Industrial Engineering"] },
-  "Marketing": { core: "Marketing", related: ["Consumer Behaviour", "Advertising", "Business Administration"] },
-  "Mathematics": { core: "Mathematics", related: ["Applied Mathematics", "Pure Mathematics", "Mathematical Physics"] },
-  "Microbiology": { core: "Microbiology", related: ["Biotechnology", "Virology", "Immunology"] },
-  "Office & Information Management": { core: "Office Management / Information Management", related: ["Business Education", "Information Systems"] },
-  "Philosophy": { core: "Philosophy", related: ["Ethics", "Logic", "Religious Studies"] },
-  "Physics": { core: "Physics", related: ["Applied Physics", "Nuclear Physics", "Electronics"] },
-  "Software Engineering": { core: "Software Engineering", related: ["Computer Science", "Information Systems"] },
-  "Statistics": { core: "Statistics", related: ["Biostatistics", "Data Science", "Mathematics"] },
+  // ── Accounting & Finance ─────────────────────────────────
+  "accounting":           { core: { value: "accounting", label: "Accounting" }, related: [{ value: "finance", label: "Finance" }, { value: "taxation", label: "Taxation" }, { value: "auditing", label: "Auditing" }, { value: "financial_management", label: "Financial Management" }] },
+  "finance":              { core: { value: "finance", label: "Finance" }, related: [{ value: "accounting", label: "Accounting" }, { value: "financial_management", label: "Financial Management" }, { value: "financial_economics", label: "Financial Economics" }] },
+  "taxation":             { core: { value: "taxation", label: "Taxation" }, related: [{ value: "accounting", label: "Accounting" }, { value: "auditing", label: "Auditing" }, { value: "finance", label: "Finance" }] },
+  "auditing":             { core: { value: "auditing", label: "Auditing" }, related: [{ value: "accounting", label: "Accounting" }, { value: "taxation", label: "Taxation" }, { value: "financial_management", label: "Financial Management" }] },
+  "financial_management": { core: { value: "financial_management", label: "Financial Management" }, related: [{ value: "finance", label: "Finance" }, { value: "accounting", label: "Accounting" }, { value: "economics", label: "Economics" }] },
+
+  // ── Advertising & Communication ───────────────────────────
+  "advertising":                        { core: { value: "advertising", label: "Advertising" }, related: [{ value: "marketing", label: "Marketing" }, { value: "mass_communication", label: "Mass Communication" }, { value: "media_studies", label: "Media Studies" }, { value: "integrated_marketing_communication", label: "Integrated Marketing Communication" }] },
+  "marketing":                          { core: { value: "marketing", label: "Marketing" }, related: [{ value: "advertising", label: "Advertising" }, { value: "mass_communication", label: "Mass Communication" }, { value: "integrated_marketing_communication", label: "Integrated Marketing Communication" }] },
+  "mass_communication":                 { core: { value: "mass_communication", label: "Mass Communication" }, related: [{ value: "media_studies", label: "Media Studies" }, { value: "advertising", label: "Advertising" }, { value: "information_media_studies", label: "Information & Media Studies" }] },
+  "media_studies":                      { core: { value: "media_studies", label: "Media Studies" }, related: [{ value: "mass_communication", label: "Mass Communication" }, { value: "advertising", label: "Advertising" }, { value: "film_multimedia_studies", label: "Film & Multimedia Studies" }] },
+  "integrated_marketing_communication": { core: { value: "integrated_marketing_communication", label: "Integrated Marketing Communication" }, related: [{ value: "marketing", label: "Marketing" }, { value: "advertising", label: "Advertising" }] },
+
+  // ── Agriculture ───────────────────────────────────────────
+  "agriculture":           { core: { value: "agriculture", label: "Agriculture / Agricultural Science" }, related: [{ value: "agronomy", label: "Agronomy" }, { value: "animal_science", label: "Animal Science" }, { value: "soil_science", label: "Soil Science" }, { value: "agricultural_economics", label: "Agricultural Economics" }, { value: "crop_science", label: "Crop Science" }] },
+  "agronomy":              { core: { value: "agronomy", label: "Agronomy" }, related: [{ value: "agriculture", label: "Agriculture" }, { value: "crop_science", label: "Crop Science" }, { value: "soil_science", label: "Soil Science" }] },
+  "animal_science":        { core: { value: "animal_science", label: "Animal Science" }, related: [{ value: "agriculture", label: "Agriculture" }, { value: "zoology", label: "Zoology" }, { value: "biology", label: "Biology" }] },
+  "soil_science":          { core: { value: "soil_science", label: "Soil Science" }, related: [{ value: "agriculture", label: "Agriculture" }, { value: "agronomy", label: "Agronomy" }, { value: "crop_science", label: "Crop Science" }] },
+  "agricultural_economics":{ core: { value: "agricultural_economics", label: "Agricultural Economics" }, related: [{ value: "economics", label: "Economics" }, { value: "agriculture", label: "Agriculture" }] },
+  "crop_science":          { core: { value: "crop_science", label: "Crop Science" }, related: [{ value: "agriculture", label: "Agriculture" }, { value: "agronomy", label: "Agronomy" }, { value: "botany", label: "Botany" }] },
+
+  // ── Architecture & Design ─────────────────────────────────
+  "architecture":            { core: { value: "architecture", label: "Architecture" }, related: [{ value: "environmental_design", label: "Environmental Design" }, { value: "urban_regional_planning", label: "Urban & Regional Planning" }, { value: "building_technology", label: "Building Technology" }] },
+  "environmental_design":    { core: { value: "environmental_design", label: "Environmental Design" }, related: [{ value: "architecture", label: "Architecture" }, { value: "urban_regional_planning", label: "Urban & Regional Planning" }] },
+  "urban_regional_planning": { core: { value: "urban_regional_planning", label: "Urban & Regional Planning" }, related: [{ value: "architecture", label: "Architecture" }, { value: "environmental_design", label: "Environmental Design" }, { value: "estate_management", label: "Estate Management" }] },
+  "building_technology":     { core: { value: "building_technology", label: "Building Technology" }, related: [{ value: "architecture", label: "Architecture" }, { value: "building", label: "Building" }] },
+
+  // ── Biology & Life Sciences ───────────────────────────────
+  "biology":          { core: { value: "biology", label: "Biology" }, related: [{ value: "botany", label: "Botany" }, { value: "zoology", label: "Zoology" }, { value: "genetics", label: "Genetics" }, { value: "ecology", label: "Ecology" }, { value: "molecular_biology", label: "Molecular Biology" }] },
+  "botany":           { core: { value: "botany", label: "Botany" }, related: [{ value: "biology", label: "Biology" }, { value: "ecology", label: "Ecology" }, { value: "crop_science", label: "Crop Science" }] },
+  "zoology":          { core: { value: "zoology", label: "Zoology" }, related: [{ value: "biology", label: "Biology" }, { value: "genetics", label: "Genetics" }, { value: "ecology", label: "Ecology" }] },
+  "genetics":         { core: { value: "genetics", label: "Genetics" }, related: [{ value: "biology", label: "Biology" }, { value: "molecular_biology", label: "Molecular Biology" }, { value: "biotechnology", label: "Biotechnology" }] },
+  "ecology":          { core: { value: "ecology", label: "Ecology" }, related: [{ value: "biology", label: "Biology" }, { value: "botany", label: "Botany" }, { value: "zoology", label: "Zoology" }] },
+  "molecular_biology": { core: { value: "molecular_biology", label: "Molecular Biology" }, related: [{ value: "biology", label: "Biology" }, { value: "biochemistry", label: "Biochemistry" }, { value: "genetics", label: "Genetics" }] },
+
+  // ── Computer Science & IT ─────────────────────────────────
+  "computer_science":      { core: { value: "computer_science", label: "Computer Science" }, related: [{ value: "software_engineering", label: "Software Engineering" }, { value: "information_systems", label: "Information Systems" }, { value: "artificial_intelligence", label: "Artificial Intelligence" }] },
+  "software_engineering":  { core: { value: "software_engineering", label: "Software Engineering" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "information_systems", label: "Information Systems" }] },
+  "information_systems":   { core: { value: "information_systems", label: "Information Systems" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "artificial_intelligence", label: "Artificial Intelligence" }, { value: "data_science", label: "Data Science" }] },
+  "artificial_intelligence": { core: { value: "artificial_intelligence", label: "Artificial Intelligence" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "data_science", label: "Data Science" }, { value: "machine_learning", label: "Machine Learning" }] },
+
+  // ── Cyber Security ────────────────────────────────────────
+  "cyber_security":     { core: { value: "cyber_security", label: "Cyber Security" }, related: [{ value: "information_security", label: "Information Security" }, { value: "digital_forensics", label: "Digital Forensics" }, { value: "computer_science", label: "Computer Science" }] },
+  "information_security": { core: { value: "information_security", label: "Information Security" }, related: [{ value: "cyber_security", label: "Cyber Security" }, { value: "digital_forensics", label: "Digital Forensics" }] },
+  "digital_forensics":  { core: { value: "digital_forensics", label: "Digital Forensics" }, related: [{ value: "cyber_security", label: "Cyber Security" }, { value: "information_security", label: "Information Security" }] },
+
+  // ── Data Science & Statistics ─────────────────────────────
+  "data_science":   { core: { value: "data_science", label: "Data Science" }, related: [{ value: "statistics", label: "Statistics" }, { value: "machine_learning", label: "Machine Learning" }, { value: "artificial_intelligence", label: "Artificial Intelligence" }] },
+  "statistics":     { core: { value: "statistics", label: "Statistics" }, related: [{ value: "data_science", label: "Data Science" }, { value: "mathematics", label: "Mathematics" }, { value: "machine_learning", label: "Machine Learning" }] },
+  "machine_learning": { core: { value: "machine_learning", label: "Machine Learning" }, related: [{ value: "artificial_intelligence", label: "Artificial Intelligence" }, { value: "data_science", label: "Data Science" }, { value: "statistics", label: "Statistics" }] },
+
+  // ── Economics ─────────────────────────────────────────────
+  "economics":              { core: { value: "economics", label: "Economics" }, related: [{ value: "development_economics", label: "Development Economics" }, { value: "econometrics", label: "Econometrics" }, { value: "financial_economics", label: "Financial Economics" }] },
+  "development_economics":  { core: { value: "development_economics", label: "Development Economics" }, related: [{ value: "economics", label: "Economics" }, { value: "agricultural_economics", label: "Agricultural Economics" }] },
+  "econometrics":           { core: { value: "econometrics", label: "Econometrics" }, related: [{ value: "economics", label: "Economics" }, { value: "statistics", label: "Statistics" }, { value: "mathematics", label: "Mathematics" }] },
+  "financial_economics":    { core: { value: "financial_economics", label: "Financial Economics" }, related: [{ value: "economics", label: "Economics" }, { value: "finance", label: "Finance" }, { value: "financial_management", label: "Financial Management" }] },
+
+  // ── Mathematics ───────────────────────────────────────────
+  "mathematics":         { core: { value: "mathematics", label: "Mathematics" }, related: [{ value: "applied_mathematics", label: "Applied Mathematics" }, { value: "pure_mathematics", label: "Pure Mathematics" }, { value: "mathematical_physics", label: "Mathematical Physics" }] },
+  "applied_mathematics": { core: { value: "applied_mathematics", label: "Applied Mathematics" }, related: [{ value: "mathematics", label: "Mathematics" }, { value: "statistics", label: "Statistics" }, { value: "mathematical_physics", label: "Mathematical Physics" }] },
+  "pure_mathematics":    { core: { value: "pure_mathematics", label: "Pure Mathematics" }, related: [{ value: "mathematics", label: "Mathematics" }, { value: "applied_mathematics", label: "Applied Mathematics" }] },
+  "mathematical_physics": { core: { value: "mathematical_physics", label: "Mathematical Physics" }, related: [{ value: "mathematics", label: "Mathematics" }, { value: "physics", label: "Physics" }, { value: "applied_mathematics", label: "Applied Mathematics" }] },
+
+  // ── Physics ───────────────────────────────────────────────
+  "physics":        { core: { value: "physics", label: "Physics" }, related: [{ value: "applied_physics", label: "Applied Physics" }, { value: "nuclear_physics", label: "Nuclear Physics" }, { value: "electronics", label: "Electronics" }] },
+  "applied_physics": { core: { value: "applied_physics", label: "Applied Physics" }, related: [{ value: "physics", label: "Physics" }, { value: "nuclear_physics", label: "Nuclear Physics" }, { value: "electronics", label: "Electronics" }] },
+  "nuclear_physics": { core: { value: "nuclear_physics", label: "Nuclear Physics" }, related: [{ value: "physics", label: "Physics" }, { value: "applied_physics", label: "Applied Physics" }] },
+  "electronics":    { core: { value: "electronics", label: "Electronics" }, related: [{ value: "physics", label: "Physics" }, { value: "applied_physics", label: "Applied Physics" }, { value: "computer_science", label: "Computer Science" }] },
+
+  // ── Chemistry ─────────────────────────────────────────────
+  "chemistry":           { core: { value: "chemistry", label: "Chemistry" }, related: [{ value: "industrial_chemistry", label: "Industrial Chemistry" }, { value: "biochemistry", label: "Biochemistry" }, { value: "materials_science", label: "Materials Science" }] },
+  "industrial_chemistry": { core: { value: "industrial_chemistry", label: "Industrial Chemistry" }, related: [{ value: "chemistry", label: "Chemistry" }, { value: "materials_science", label: "Materials Science" }] },
+  "biochemistry":        { core: { value: "biochemistry", label: "Biochemistry" }, related: [{ value: "chemistry", label: "Chemistry" }, { value: "molecular_biology", label: "Molecular Biology" }, { value: "microbiology", label: "Microbiology" }] },
+  "materials_science":   { core: { value: "materials_science", label: "Materials Science" }, related: [{ value: "chemistry", label: "Chemistry" }, { value: "physics", label: "Physics" }, { value: "industrial_chemistry", label: "Industrial Chemistry" }] },
+
+  // ── Microbiology & Biotechnology ─────────────────────────
+  "microbiology":  { core: { value: "microbiology", label: "Microbiology" }, related: [{ value: "biotechnology", label: "Biotechnology" }, { value: "virology", label: "Virology" }, { value: "immunology", label: "Immunology" }] },
+  "biotechnology": { core: { value: "biotechnology", label: "Biotechnology" }, related: [{ value: "microbiology", label: "Microbiology" }, { value: "genetics", label: "Genetics" }, { value: "molecular_biology", label: "Molecular Biology" }] },
+  "virology":      { core: { value: "virology", label: "Virology" }, related: [{ value: "microbiology", label: "Microbiology" }, { value: "immunology", label: "Immunology" }, { value: "biology", label: "Biology" }] },
+  "immunology":    { core: { value: "immunology", label: "Immunology" }, related: [{ value: "microbiology", label: "Microbiology" }, { value: "virology", label: "Virology" }, { value: "biology", label: "Biology" }] },
+
+  // ── English & Linguistics ─────────────────────────────────
+  "english":             { core: { value: "english", label: "English / English Studies" }, related: [{ value: "linguistics", label: "Linguistics" }, { value: "literature", label: "Literature in English" }, { value: "applied_linguistics", label: "Applied Linguistics" }] },
+  "linguistics":         { core: { value: "linguistics", label: "Linguistics" }, related: [{ value: "english", label: "English" }, { value: "applied_linguistics", label: "Applied Linguistics" }, { value: "literature", label: "Literature" }] },
+  "literature":          { core: { value: "literature", label: "Literature" }, related: [{ value: "english", label: "English" }, { value: "linguistics", label: "Linguistics" }] },
+  "applied_linguistics": { core: { value: "applied_linguistics", label: "Applied Linguistics" }, related: [{ value: "linguistics", label: "Linguistics" }, { value: "english", label: "English" }] },
+
+  // ── Philosophy & Religion ─────────────────────────────────
+  "philosophy":       { core: { value: "philosophy", label: "Philosophy" }, related: [{ value: "ethics", label: "Ethics" }, { value: "logic", label: "Logic" }, { value: "religious_studies", label: "Religious Studies" }] },
+  "ethics":           { core: { value: "ethics", label: "Ethics" }, related: [{ value: "philosophy", label: "Philosophy" }, { value: "logic", label: "Logic" }] },
+  "logic":            { core: { value: "logic", label: "Logic" }, related: [{ value: "philosophy", label: "Philosophy" }, { value: "mathematics", label: "Mathematics" }] },
+  "religious_studies": { core: { value: "religious_studies", label: "Religious Studies" }, related: [{ value: "philosophy", label: "Philosophy" }] },
+
+  // ── Library & Information Science ─────────────────────────
+  "library_information_science": { core: { value: "library_information_science", label: "Library and Information Science (LIS)" }, related: [{ value: "information_science", label: "Information Science" }, { value: "knowledge_management", label: "Knowledge Management" }, { value: "archival_studies", label: "Archival Studies" }, { value: "records_management", label: "Records Management" }, { value: "digital_libraries", label: "Digital Libraries" }] },
+  "information_science":  { core: { value: "information_science", label: "Information Science" }, related: [{ value: "library_information_science", label: "Library and Information Science" }, { value: "knowledge_management", label: "Knowledge Management" }, { value: "information_systems", label: "Information Systems" }] },
+  "knowledge_management": { core: { value: "knowledge_management", label: "Knowledge Management" }, related: [{ value: "library_information_science", label: "Library and Information Science" }, { value: "information_science", label: "Information Science" }] },
+  "archival_studies":     { core: { value: "archival_studies", label: "Archival Studies" }, related: [{ value: "library_information_science", label: "Library and Information Science" }, { value: "records_management", label: "Records Management" }] },
+  "records_management":   { core: { value: "records_management", label: "Records Management" }, related: [{ value: "archival_studies", label: "Archival Studies" }, { value: "library_information_science", label: "Library and Information Science" }] },
+  "digital_libraries":    { core: { value: "digital_libraries", label: "Digital Libraries" }, related: [{ value: "library_information_science", label: "Library and Information Science" }, { value: "information_systems", label: "Information Systems" }, { value: "information_science", label: "Information Science" }] },
+
+  // ── Others ────────────────────────────────────────────────
+  "building":                        { core: { value: "building", label: "Building" }, related: [{ value: "building_technology", label: "Building Technology" }, { value: "architecture", label: "Architecture" }] },
+  "business_administration":         { core: { value: "business_administration", label: "Business Administration (MBA)" }, related: [{ value: "financial_management", label: "Financial Management" }, { value: "economics", label: "Economics" }] },
+  "business_information_technology": { core: { value: "business_information_technology", label: "Business Information Systems / IT Management" }, related: [{ value: "information_systems", label: "Information Systems" }, { value: "computer_science", label: "Computer Science" }] },
+  "clothing_textile":                { core: { value: "clothing_textile", label: "Textile Science / Clothing & Textile" }, related: [{ value: "fashion_design", label: "Fashion Design" }] },
+  "employment_relations_hrm":        { core: { value: "employment_relations_hrm", label: "Human Resource Management / Industrial Relations" }, related: [{ value: "business_administration", label: "Business Administration" }] },
+  "entrepreneurship":                { core: { value: "entrepreneurship", label: "Entrepreneurship" }, related: [{ value: "business_administration", label: "Business Administration" }] },
+  "estate_management":               { core: { value: "estate_management", label: "Estate Management" }, related: [{ value: "urban_regional_planning", label: "Urban & Regional Planning" }, { value: "architecture", label: "Architecture" }] },
+  "fashion_design":                  { core: { value: "fashion_design", label: "Fashion Design" }, related: [{ value: "clothing_textile", label: "Clothing & Textile" }, { value: "interior_architecture_design", label: "Interior Architecture & Design" }] },
+  "film_multimedia_studies":         { core: { value: "film_multimedia_studies", label: "Film Studies / Multimedia Studies" }, related: [{ value: "mass_communication", label: "Mass Communication" }, { value: "media_studies", label: "Media Studies" }] },
+  "french":                          { core: { value: "french", label: "French" }, related: [{ value: "linguistics", label: "Linguistics" }, { value: "english", label: "English" }] },
+  "furniture_design":                { core: { value: "furniture_design", label: "Furniture Design" }, related: [{ value: "interior_architecture_design", label: "Interior Architecture & Design" }] },
+  "igbo":                            { core: { value: "igbo", label: "Igbo Language" }, related: [{ value: "linguistics", label: "Linguistics" }, { value: "english", label: "English" }] },
+  "information_media_studies":       { core: { value: "information_media_studies", label: "Information & Media Studies" }, related: [{ value: "mass_communication", label: "Mass Communication" }, { value: "library_information_science", label: "Library & Information Science" }] },
+  "ict":                             { core: { value: "ict", label: "Information & Communication Technology" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "information_systems", label: "Information Systems" }] },
+  "interior_architecture_design":    { core: { value: "interior_architecture_design", label: "Interior Architecture" }, related: [{ value: "architecture", label: "Architecture" }, { value: "fashion_design", label: "Fashion Design" }] },
+  "logistics_supply_chain":          { core: { value: "logistics_supply_chain", label: "Logistics / Supply Chain Management" }, related: [{ value: "business_administration", label: "Business Administration" }] },
+  "office_information_management":   { core: { value: "office_information_management", label: "Office Management / Information Management" }, related: [{ value: "business_administration", label: "Business Administration" }, { value: "information_systems", label: "Information Systems" }] },
 };
 
 function onProgrammeOrDegreeChange() {
@@ -906,15 +1063,15 @@ function onProgrammeOrDegreeChange() {
   const phdSel  = document.getElementById("apply-phd-degree");
   if (!phdWrap || !phdSel) return;
 
-  if (degType === "PhD" && programme && PHD_MAP[programme]) {
+  if (degType === "phd" && programme && PHD_MAP[programme]) {
     const map = PHD_MAP[programme];
     phdSel.innerHTML = `<option value="" disabled selected hidden>Select PhD degree field</option>`;
-    // Core option (bold-labelled via optgroup)
+    // Core option
     const coreGrp = document.createElement("optgroup");
     coreGrp.label = "Core PhD";
     const coreOpt = document.createElement("option");
-    coreOpt.value = map.core;
-    coreOpt.textContent = map.core;
+    coreOpt.value = map.core.value;
+    coreOpt.textContent = map.core.label;
     coreGrp.appendChild(coreOpt);
     phdSel.appendChild(coreGrp);
     // Related options
@@ -923,8 +1080,8 @@ function onProgrammeOrDegreeChange() {
       relGrp.label = "Related PhDs";
       map.related.forEach((r) => {
         const o = document.createElement("option");
-        o.value = r;
-        o.textContent = r;
+        o.value = r.value;
+        o.textContent = r.label;
         relGrp.appendChild(o);
       });
       phdSel.appendChild(relGrp);
@@ -951,3 +1108,4 @@ function onProgrammeOrDegreeChange() {
 function onPhdDegreeFieldChange() {
   // placeholder — future logic if needed
 }
+

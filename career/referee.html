@@ -25,38 +25,11 @@
       --gold2:  #e0bc6e;
       --white:  #ffffff;
       --muted:  #8a9ab0;
-      --border: rgba(201,168,76,.22);
-      --card:   rgba(19,34,54,.85);
+      --border: rgba(201,168,76,.3);
+      --card:   rgba(255,255,255,.96);
       --radius: 14px;
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      /* theme tokens */
-      --bg:          #0d1b2a;
-      --surface:     rgba(19,34,54,.85);
-      --surface2:    rgba(255,255,255,.04);
-      --text:        #ffffff;
-      --text-muted:  #8a9ab0;
-      --label:       #c8d4e0;
-      --topbar-bg:   rgba(13,27,42,.95);
-      --footer-col:  rgba(138,154,176,.5);
-      --footer-bdr:  rgba(255,255,255,.05);
-      --ql-bg:       rgba(255,255,255,.03);
-      --ql-toolbar:  rgba(255,255,255,.04);
-      --ql-text:     #ffffff;
-      --ql-ph:       rgba(255,255,255,.25);
-      --ql-picker:   #1a2d44;
-      --pill-bg:     rgba(255,255,255,.04);
-      --pill-bdr:    rgba(255,255,255,.07);
-      --intro-bg:    rgba(201,168,76,.06);
-      --intro-text:  #d8e4f0;
-      --highlight:   #e0bc6e;
-      --drop-bg:     rgba(255,255,255,.02);
-      --note-bg:     rgba(201,168,76,.06);
-      --note-bdr:    rgba(201,168,76,.18);
-      --note-text:   #c8d4e0;
-    }
-
-    /* ── Light mode overrides ── */
-    [data-theme="light"] {
+      --shadow: 0 20px 60px rgba(0,0,0,.1);
+      /* Light mode is default */
       --bg:          #f0f4f9;
       --surface:     rgba(255,255,255,.96);
       --surface2:    rgba(30,58,95,.04);
@@ -80,8 +53,35 @@
       --note-bg:     rgba(201,168,76,.08);
       --note-bdr:    rgba(201,168,76,.3);
       --note-text:   #1e3a5f;
-      --shadow:      0 20px 60px rgba(0,0,0,.1);
-      --border:      rgba(201,168,76,.3);
+    }
+
+    /* ── Dark mode overrides ── */
+    [data-theme="dark"] {
+      --bg:          #0d1b2a;
+      --surface:     rgba(19,34,54,.85);
+      --surface2:    rgba(255,255,255,.04);
+      --text:        #ffffff;
+      --text-muted:  #8a9ab0;
+      --label:       #c8d4e0;
+      --topbar-bg:   rgba(13,27,42,.95);
+      --footer-col:  rgba(138,154,176,.5);
+      --footer-bdr:  rgba(255,255,255,.05);
+      --ql-bg:       rgba(255,255,255,.03);
+      --ql-toolbar:  rgba(255,255,255,.04);
+      --ql-text:     #ffffff;
+      --ql-ph:       rgba(255,255,255,.25);
+      --ql-picker:   #1a2d44;
+      --pill-bg:     rgba(255,255,255,.04);
+      --pill-bdr:    rgba(255,255,255,.07);
+      --intro-bg:    rgba(201,168,76,.06);
+      --intro-text:  #d8e4f0;
+      --highlight:   #e0bc6e;
+      --drop-bg:     rgba(255,255,255,.02);
+      --note-bg:     rgba(201,168,76,.06);
+      --note-bdr:    rgba(201,168,76,.18);
+      --note-text:   #c8d4e0;
+      --shadow:      0 20px 60px rgba(0,0,0,.45);
+      --border:      rgba(201,168,76,.22);
     }
 
     html { scroll-behavior: smooth; }
@@ -545,19 +545,21 @@
       transition: transform .4s ease;
     }
     .theme-toggle:hover svg { transform: rotate(20deg); }
-    /* icon swap — use .theme-toggle scope for higher specificity */
+    /* icon swap */
     .theme-toggle .icon-sun,
     .theme-toggle .icon-moon { display: none; }
-    /* dark mode (default): show moon */
-    html:not([data-theme="light"]) .theme-toggle .icon-moon { display: block; }
-    /* light mode: show sun */
-    html[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
-    html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+    /* light mode (default): show sun */
+    html:not([data-theme="dark"]) .theme-toggle .icon-sun { display: block; }
+    /* dark mode: show moon */
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+    html[data-theme="dark"] .theme-toggle .icon-sun  { display: none; }
     /* label swap */
     .theme-toggle .toggle-label-dark,
     .theme-toggle .toggle-label-light { display: none; }
-    html:not([data-theme="light"]) .theme-toggle .toggle-label-dark  { display: inline; }
-    html[data-theme="light"] .theme-toggle .toggle-label-light { display: inline; }
+    /* light mode (default): button offers Dark Mode */
+    html:not([data-theme="dark"]) .theme-toggle .toggle-label-light { display: inline; }
+    /* dark mode: button offers Light Mode */
+    html[data-theme="dark"] .theme-toggle .toggle-label-dark { display: inline; }
 
     /* ── Toast ── */
     #toast-container {
@@ -752,21 +754,22 @@
   <script src="../assets/js/career-referee.js"></script>
 
   <script>
-    /* ── Theme toggle ── */
+    /* ── Theme toggle — light is default ── */
     (function () {
-      const saved = localStorage.getItem('uisto-ref-theme') || 'dark';
-      if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      const saved = localStorage.getItem('uisto-ref-theme') || 'light';
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      // light mode needs no attribute (it's the :root default)
     })();
 
     function toggleTheme() {
       const html = document.documentElement;
-      const isLight = html.getAttribute('data-theme') === 'light';
-      if (isLight) {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) {
         html.removeAttribute('data-theme');
-        localStorage.setItem('uisto-ref-theme', 'dark');
-      } else {
-        html.setAttribute('data-theme', 'light');
         localStorage.setItem('uisto-ref-theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('uisto-ref-theme', 'dark');
       }
     }
   </script>

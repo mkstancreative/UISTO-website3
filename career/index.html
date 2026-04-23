@@ -410,42 +410,42 @@
               <label for="apply-department">Department<span class="req-star">*</span></label>
               <select id="apply-department">
                 <option value="" disabled selected hidden>Select department</option>
-                <option>Accounting</option>
-                <option>Advertising</option>
-                <option>Agriculture</option>
-                <option>Architecture</option>
-                <option>Biology</option>
-                <option>Building</option>
-                <option>Business Administration</option>
-                <option>Business Information Technology</option>
-                <option>Chemistry</option>
-                <option>Clothing &amp; Textile</option>
-                <option>Computer Science</option>
-                <option>Cyber Security</option>
-                <option>Data Science</option>
-                <option>Economics</option>
-                <option>Employment Relations and Human Resource Management</option>
-                <option>English</option>
-                <option>Entrepreneurship</option>
-                <option>Estate Management</option>
-                <option>Fashion Design</option>
-                <option>Film &amp; Multimedia Studies</option>
-                <option>French</option>
-                <option>Furniture Design</option>
-                <option>Igbo</option>
-                <option>Information &amp; Media Studies</option>
-                <option>Information and Communication Technology</option>
-                <option>Interior Architecture &amp; Design</option>
-                <option>Library Science</option>
-                <option>Logistics &amp; Supply Chain Technology</option>
-                <option>Marketing</option>
-                <option>Mathematics</option>
-                <option>Microbiology</option>
-                <option>Office &amp; Information Management</option>
-                <option>Philosophy</option>
-                <option>Physics</option>
-                <option>Software Engineering</option>
-                <option>Statistics</option>
+                <option value="accounting">Accounting</option>
+                <option value="advertising">Advertising</option>
+                <option value="agriculture">Agriculture</option>
+                <option value="architecture">Architecture</option>
+                <option value="biology">Biology</option>
+                <option value="building">Building</option>
+                <option value="business_administration">Business Administration</option>
+                <option value="business_information_technology">Business Information Technology</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="clothing_textile">Clothing &amp; Textile</option>
+                <option value="computer_science">Computer Science</option>
+                <option value="cyber_security">Cyber Security</option>
+                <option value="data_science">Data Science</option>
+                <option value="economics">Economics</option>
+                <option value="employment_relations_hrm">Employment Relations &amp; Human Resource Management</option>
+                <option value="english">English</option>
+                <option value="entrepreneurship">Entrepreneurship</option>
+                <option value="estate_management">Estate Management</option>
+                <option value="fashion_design">Fashion Design</option>
+                <option value="film_multimedia_studies">Film &amp; Multimedia Studies</option>
+                <option value="french">French</option>
+                <option value="furniture_design">Furniture Design</option>
+                <option value="igbo">Igbo</option>
+                <option value="information_media_studies">Information &amp; Media Studies</option>
+                <option value="ict">Information and Communication Technology</option>
+                <option value="interior_architecture_design">Interior Architecture &amp; Design</option>
+                <option value="library_information_science">Library Science</option>
+                <option value="logistics_supply_chain">Logistics &amp; Supply Chain Technology</option>
+                <option value="marketing">Marketing</option>
+                <option value="mathematics">Mathematics</option>
+                <option value="microbiology">Microbiology</option>
+                <option value="office_information_management">Office &amp; Information Management</option>
+                <option value="philosophy">Philosophy</option>
+                <option value="physics">Physics</option>
+                <option value="software_engineering">Software Engineering</option>
+                <option value="statistics">Statistics</option>
               </select>
             </div>
           </div><!-- /.job-selector-wrap -->
@@ -556,13 +556,13 @@
               <label for="apply-degree-type">Max. Qualification <span class="req-star">*</span></label>
               <select id="apply-degree-type" onchange="onProgrammeOrDegreeChange()">
                 <option value="" disabled selected hidden>Select qualification</option>
-                <option value="PhD">PhD</option>
-                <option value="Masters">Masters</option>
-                <option value="Bachelors">Bachelors</option>
-                <option value="HND">HND</option>
-                <option value="OND">OND</option>
-                <option value="PGDE">PGDE</option>
-                <option value="PGD">PGD</option>
+                <option value="phd">PhD</option>
+                <option value="masters">Masters</option>
+                <option value="bachelors">Bachelors</option>
+                <option value="hnd">HND</option>
+                <option value="ond">OND</option>
+                <option value="pgde">PGDE</option>
+                <option value="pgd">PGD</option>
               </select>
             </div>
 
@@ -600,42 +600,108 @@
               <label for="apply-programme">Department of Study<span class="req-star">*</span></label>
               <select id="apply-programme" onchange="onProgrammeOrDegreeChange()">
                 <option value="" disabled selected hidden>Select Department</option>
-                <option>Accounting</option>
-                <option>Advertising</option>
-                <option>Agriculture</option>
-                <option>Architecture</option>
-                <option>Biology</option>
-                <option>Building</option>
-                <option>Business Administration</option>
-                <option>Business Information Technology</option>
-                <option>Chemistry</option>
-                <option>Clothing &amp; Textile</option>
-                <option>Computer Science</option>
-                <option>Cyber Security</option>
-                <option>Data Science</option>
-                <option>Economics</option>
-                <option>Employment Relations &amp; HRM</option>
-                <option>English</option>
-                <option>Entrepreneurship</option>
-                <option>Estate Management</option>
-                <option>Fashion Design</option>
-                <option>Film &amp; Multimedia Studies</option>
-                <option>French</option>
-                <option>Furniture Design</option>
-                <option>Igbo</option>
-                <option>Information &amp; Media Studies</option>
-                <option>ICT</option>
-                <option>Interior Architecture &amp; Design</option>
-                <option>Library &amp; Information Science</option>
-                <option>Logistics &amp; Supply Chain Technology</option>
-                <option>Marketing</option>
-                <option>Mathematics</option>
-                <option>Microbiology</option>
-                <option>Office &amp; Information Management</option>
-                <option>Philosophy</option>
-                <option>Physics</option>
-                <option>Software Engineering</option>
-                <option>Statistics</option>
+                <optgroup label="Accounting &amp; Finance">
+                  <option value="accounting">Accounting</option>
+                  <option value="finance">Finance</option>
+                  <option value="taxation">Taxation</option>
+                  <option value="auditing">Auditing</option>
+                  <option value="financial_management">Financial Management</option>
+                </optgroup>
+                <optgroup label="Advertising &amp; Communication">
+                  <option value="advertising">Advertising</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="mass_communication">Mass Communication</option>
+                  <option value="media_studies">Media Studies</option>
+                  <option value="integrated_marketing_communication">Integrated Marketing Communication</option>
+                </optgroup>
+                <optgroup label="Agriculture">
+                  <option value="agriculture">Agriculture</option>
+                  <option value="agronomy">Agronomy</option>
+                  <option value="animal_science">Animal Science</option>
+                  <option value="soil_science">Soil Science</option>
+                  <option value="agricultural_economics">Agricultural Economics</option>
+                  <option value="crop_science">Crop Science</option>
+                </optgroup>
+                <optgroup label="Architecture &amp; Design">
+                  <option value="architecture">Architecture</option>
+                  <option value="environmental_design">Environmental Design</option>
+                  <option value="urban_regional_planning">Urban &amp; Regional Planning</option>
+                  <option value="building_technology">Building Technology</option>
+                </optgroup>
+                <optgroup label="Biology &amp; Life Sciences">
+                  <option value="biology">Biology</option>
+                  <option value="botany">Botany</option>
+                  <option value="zoology">Zoology</option>
+                  <option value="genetics">Genetics</option>
+                  <option value="ecology">Ecology</option>
+                  <option value="molecular_biology">Molecular Biology</option>
+                </optgroup>
+                <optgroup label="Computer Science &amp; IT">
+                  <option value="computer_science">Computer Science</option>
+                  <option value="software_engineering">Software Engineering</option>
+                  <option value="information_systems">Information Systems</option>
+                  <option value="artificial_intelligence">Artificial Intelligence</option>
+                </optgroup>
+                <optgroup label="Cyber Security">
+                  <option value="cyber_security">Cyber Security</option>
+                  <option value="information_security">Information Security</option>
+                  <option value="digital_forensics">Digital Forensics</option>
+                </optgroup>
+                <optgroup label="Data Science &amp; Statistics">
+                  <option value="data_science">Data Science</option>
+                  <option value="statistics">Statistics</option>
+                  <option value="machine_learning">Machine Learning</option>
+                </optgroup>
+                <optgroup label="Economics">
+                  <option value="economics">Economics</option>
+                  <option value="development_economics">Development Economics</option>
+                  <option value="econometrics">Econometrics</option>
+                  <option value="financial_economics">Financial Economics</option>
+                </optgroup>
+                <optgroup label="Mathematics">
+                  <option value="mathematics">Mathematics</option>
+                  <option value="applied_mathematics">Applied Mathematics</option>
+                  <option value="pure_mathematics">Pure Mathematics</option>
+                  <option value="mathematical_physics">Mathematical Physics</option>
+                </optgroup>
+                <optgroup label="Physics">
+                  <option value="physics">Physics</option>
+                  <option value="applied_physics">Applied Physics</option>
+                  <option value="nuclear_physics">Nuclear Physics</option>
+                  <option value="electronics">Electronics</option>
+                </optgroup>
+                <optgroup label="Chemistry">
+                  <option value="chemistry">Chemistry</option>
+                  <option value="industrial_chemistry">Industrial Chemistry</option>
+                  <option value="biochemistry">Biochemistry</option>
+                  <option value="materials_science">Materials Science</option>
+                </optgroup>
+                <optgroup label="Microbiology &amp; Biotechnology">
+                  <option value="microbiology">Microbiology</option>
+                  <option value="biotechnology">Biotechnology</option>
+                  <option value="virology">Virology</option>
+                  <option value="immunology">Immunology</option>
+                </optgroup>
+                <optgroup label="English &amp; Linguistics">
+                  <option value="english">English</option>
+                  <option value="linguistics">Linguistics</option>
+                  <option value="literature">Literature</option>
+                  <option value="applied_linguistics">Applied Linguistics</option>
+                </optgroup>
+                <optgroup label="Philosophy &amp; Religion">
+                  <option value="philosophy">Philosophy</option>
+                  <option value="ethics">Ethics</option>
+                  <option value="logic">Logic</option>
+                  <option value="religious_studies">Religious Studies</option>
+                </optgroup>
+                <optgroup label="Library &amp; Information Science">
+                  <option value="library_information_science">Library &amp; Information Science</option>
+                  <option value="information_science">Information Science</option>
+                  <option value="knowledge_management">Knowledge Management</option>
+                  <option value="archival_studies">Archival Studies</option>
+                  <option value="records_management">Records Management</option>
+                  <option value="digital_libraries">Digital Libraries</option>
+                </optgroup>
               </select>
             </div>
 
