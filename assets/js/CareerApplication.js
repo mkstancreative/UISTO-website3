@@ -4,6 +4,9 @@ const COUNTRIES_API = "https://countriesnow.space/api/v0.1";
 /* ── Role Type State ─────────────────────────────────── */
 let currentRoleType = "academic"; // "academic" | "non-academic"
 
+/* ── Submission guard — prevents double-fire ─────────── */
+let isSubmitting = false;
+
 function showToast(message, type = "info") {
   let container = document.getElementById("toast-container");
   if (!container) {
@@ -155,6 +158,7 @@ async function onStateChange() {
    MODAL OPEN / CLOSE
    ══════════════════════════════════════════════════════════════ */
 function openApplyModal() {
+  isSubmitting = false; // reset guard for fresh attempt
   document.getElementById("career-apply-form")?.reset();
   // hide preview card on fresh open
   const card = document.getElementById("job-preview-card");
@@ -173,6 +177,7 @@ function openApplyModal() {
 }
 
 function closeApplyModal() {
+  isSubmitting = false; // ensure guard is clean on close
   document.getElementById("apply-overlay").classList.remove("active");
   document.body.style.overflow = "";
   // Reset success panel so modal is clean on next open
@@ -675,8 +680,13 @@ function _validateStep3() {
    ══════════════════════════════════════════════════════════════ */
 async function submitApplication(e) {
   e.preventDefault();
-  if (!_validateRoleType()) return;
-  if (!_validateStep3()) return;
+
+  // Guard against double-submission (e.g. second listener or fast double-click)
+  if (isSubmitting) return;
+  isSubmitting = true;
+
+  if (!_validateRoleType()) { isSubmitting = false; return; }
+  if (!_validateStep3()) { isSubmitting = false; return; }
 
   const jobId = document.getElementById("apply-position-id")?.value?.trim();
   if (!jobId) {
@@ -895,6 +905,7 @@ async function submitApplication(e) {
       if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHTML; }
       progressWrap.style.display = "none";
       setProgress(0);
+      isSubmitting = false;
       resolve();
     });
 
@@ -902,6 +913,7 @@ async function submitApplication(e) {
       showToast("Network error. Please check your connection and try again.", "error");
       if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHTML; }
       progressWrap.style.display = "none";
+      isSubmitting = false;
       resolve();
     });
 
@@ -909,6 +921,7 @@ async function submitApplication(e) {
       showToast("Request timed out. Please try again.", "error");
       if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHTML; }
       progressWrap.style.display = "none";
+      isSubmitting = false;
       resolve();
     });
 
@@ -944,7 +957,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadNigerianStates();
   const form = document.getElementById("career-apply-form");
-  if (form) form.addEventListener("submit", submitApplication);
+  // Guard against duplicate listener registration (e.g. script evaluated twice by Webflow)
+  if (form && !form.dataset.submitBound) {
+    form.addEventListener("submit", submitApplication);
+    form.dataset.submitBound = "1";
+  }
   _goto(1);
 
   /* ── Block click-outside-to-close on both modals ──────── */
