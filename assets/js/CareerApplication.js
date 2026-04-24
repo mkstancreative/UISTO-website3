@@ -92,6 +92,20 @@ async function loadNigerianStates() {
   }
 }
 
+/* ── State name normalization: maps API state names → what cities endpoint accepts ── */
+const STATE_NAME_MAP = {
+  "Abuja Federal Capital Territory": "Federal Capital Territory",
+  "FCT": "Federal Capital Territory",
+};
+
+/* ── Hardcoded LGAs for states the API can't resolve ── */
+const FALLBACK_LGAS = {
+  "Federal Capital Territory": [
+    "Abaji", "Abuja Municipal Area Council", "Bwari",
+    "Gwagwalada", "Kuje", "Kwali"
+  ],
+};
+
 async function onStateChange() {
   const stateName = document.getElementById("apply-state").value;
   const lgaSel = document.getElementById("apply-lga");
@@ -100,11 +114,27 @@ async function onStateChange() {
     lgaSel.innerHTML = `<option value="" disabled selected hidden>Select LGA</option>`;
     return;
   }
+
+  // Normalize state name for the cities API
+  const apiStateName = STATE_NAME_MAP[stateName] || stateName;
+
+  // Check hardcoded fallback first
+  if (FALLBACK_LGAS[apiStateName]) {
+    lgaSel.innerHTML = `<option value="" disabled selected hidden>Select LGA</option>`;
+    FALLBACK_LGAS[apiStateName].forEach((lga) => {
+      const o = document.createElement("option");
+      o.value = lga;
+      o.textContent = lga;
+      lgaSel.appendChild(o);
+    });
+    return;
+  }
+
   try {
     const res = await fetch(`${COUNTRIES_API}/countries/state/cities`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ country: "Nigeria", state: stateName }),
+      body: JSON.stringify({ country: "Nigeria", state: apiStateName }),
     });
     const json = await res.json();
     if (json.error || !json.data) throw new Error();
@@ -119,6 +149,7 @@ async function onStateChange() {
     lgaSel.innerHTML = `<option value="" disabled selected hidden>Error loading LGAs</option>`;
   }
 }
+
 
 /* ══════════════════════════════════════════════════════════════
    MODAL OPEN / CLOSE
@@ -769,9 +800,11 @@ async function submitApplication(e) {
 
   const fd = new FormData();
   fd.append("jobId", jobId);
-  // Top-level department (Academic applicants)
-  const topDept = document.getElementById("apply-department")?.value || "";
-  if (topDept) fd.append("department", topDept);
+  // Top-level department — academic applicants only
+  if (currentRoleType === "academic") {
+    const topDept = document.getElementById("apply-department")?.value || "";
+    if (topDept) fd.append("department", topDept);
+  }
   // Top-level email (required by backend)
   fd.append("email", personalInfo.email);
   fd.append("personalInfo", JSON.stringify(personalInfo));
