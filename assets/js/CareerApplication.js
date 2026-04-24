@@ -1008,11 +1008,48 @@ const PHD_MAP = {
   "ecology":          { core: { value: "ecology", label: "Ecology" }, related: [{ value: "biology", label: "Biology" }, { value: "botany", label: "Botany" }, { value: "zoology", label: "Zoology" }] },
   "molecular_biology": { core: { value: "molecular_biology", label: "Molecular Biology" }, related: [{ value: "biology", label: "Biology" }, { value: "biochemistry", label: "Biochemistry" }, { value: "genetics", label: "Genetics" }] },
 
-  // ── Computer Science & IT ─────────────────────────────────
-  "computer_science":      { core: { value: "computer_science", label: "Computer Science" }, related: [{ value: "software_engineering", label: "Software Engineering" }, { value: "information_systems", label: "Information Systems" }, { value: "artificial_intelligence", label: "Artificial Intelligence" }] },
-  "software_engineering":  { core: { value: "software_engineering", label: "Software Engineering" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "information_systems", label: "Information Systems" }] },
-  "information_systems":   { core: { value: "information_systems", label: "Information Systems" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "artificial_intelligence", label: "Artificial Intelligence" }, { value: "data_science", label: "Data Science" }] },
-  "artificial_intelligence": { core: { value: "artificial_intelligence", label: "Artificial Intelligence" }, related: [{ value: "computer_science", label: "Computer Science" }, { value: "data_science", label: "Data Science" }, { value: "machine_learning", label: "Machine Learning" }] },
+
+// ── Computer Science & IT ─────────────────────────────────
+"computer_science": {
+  core: { value: "computer_science", label: "Computer Science" },
+  related: [
+    { value: "software_engineering", label: "Software Engineering" },
+    { value: "information_systems", label: "Information Systems" },
+    { value: "artificial_intelligence", label: "Artificial Intelligence" },
+    { value: "engineering", label: "Engineering" }
+  ]
+},
+
+"software_engineering": {
+  core: { value: "software_engineering", label: "Software Engineering" },
+  related: [
+    { value: "computer_science", label: "Computer Science" },
+    { value: "information_systems", label: "Information Systems" },
+    { value: "engineering", label: "Engineering" }
+  ]
+},
+
+"information_systems": {
+  core: { value: "information_systems", label: "Information Systems" },
+  related: [
+    { value: "computer_science", label: "Computer Science" },
+    { value: "artificial_intelligence", label: "Artificial Intelligence" },
+    { value: "data_science", label: "Data Science" },
+    { value: "engineering", label: "Engineering" }
+  ]
+},
+
+"artificial_intelligence": {
+  core: { value: "artificial_intelligence", label: "Artificial Intelligence" },
+  related: [
+    { value: "computer_science", label: "Computer Science" },
+    { value: "data_science", label: "Data Science" },
+    { value: "machine_learning", label: "Machine Learning" },
+    { value: "engineering", label: "Engineering" }
+  ]
+},
+  
+
 
   // ── Cyber Security ────────────────────────────────────────
   "cyber_security":     { core: { value: "cyber_security", label: "Cyber Security" }, related: [{ value: "information_security", label: "Information Security" }, { value: "digital_forensics", label: "Digital Forensics" }, { value: "computer_science", label: "Computer Science" }] },
