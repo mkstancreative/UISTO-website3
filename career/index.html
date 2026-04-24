@@ -408,7 +408,7 @@
             </div><!-- /#job-select-wrap -->
             <div class="apply-field apply-field--full academic-only" id="field-department" style="margin-top: 1rem;">
               <label for="apply-department">Department<span class="req-star">*</span></label>
-              <select id="apply-department">
+              <select id="apply-department" onchange="onDepartmentChange()">
                 <option value="" disabled selected hidden>Select department</option>
                 <option value="accounting">Accounting</option>
                 <option value="advertising">Advertising</option>
@@ -474,7 +474,7 @@
             <div class="apply-field">
               <label for="apply-dob">Date of Birth <span class="req-star">*</span></label>
               <input type="date" id="apply-dob" name="date_of_birth" id-dob-min-max />
-              <span class="apply-field-hint" style="font-size:11px;color:#6b7c93;margin-top:2px;">Applicant must be 18–65 years old.</span>
+              <span class="apply-field-hint" style="font-size:11px;color:#6b7c93;margin-top:2px;">Applicant must be 18 years and above.</span>
             </div>
 
             <div class="apply-field">
@@ -520,10 +520,7 @@
               </select>
             </div>
 
-            <div class="apply-field apply-field--full">
-              <label for="apply-nin">National Identification Number <span class="req-star">*</span></label>
-              <input type="text" id="apply-nin" name="nin" placeholder="e.g. 20000000000" autocomplete="nin" />
-            </div>
+
 
             <div class="apply-field apply-field--full">
               <label for="apply-address">Home Address <span class="req-star">*</span></label>
@@ -555,7 +552,7 @@
             <div class="apply-field">
               <label for="apply-degree-type">Max. Qualification <span class="req-star">*</span></label>
               <select id="apply-degree-type" onchange="onProgrammeOrDegreeChange()">
-                <option value="" disabled selected hidden>Select qualification</option>
+                <option value="" selected hidden>-- Select Qualification --</option>
                 <option value="phd">PhD</option>
                 <option value="masters">Masters</option>
                 <option value="bachelors">Bachelors</option>
@@ -596,117 +593,14 @@
               <input type="number" id="apply-year-awarded" placeholder="e.g. 2018" min="1950" max="2030" />
             </div>
 
-            <div class="apply-field" id="field-programme">
-              <label for="apply-programme">Department of Study<span class="req-star">*</span></label>
-              <select id="apply-programme" onchange="onProgrammeOrDegreeChange()">
-                <option value="" disabled selected hidden>Select Department</option>
-                <optgroup label="Accounting &amp; Finance">
-                  <option value="accounting">Accounting</option>
-                  <option value="finance">Finance</option>
-                  <option value="taxation">Taxation</option>
-                  <option value="auditing">Auditing</option>
-                  <option value="financial_management">Financial Management</option>
-                </optgroup>
-                <optgroup label="Advertising &amp; Communication">
-                  <option value="advertising">Advertising</option>
-                  <option value="marketing">Marketing</option>
-                  <option value="mass_communication">Mass Communication</option>
-                  <option value="media_studies">Media Studies</option>
-                  <option value="integrated_marketing_communication">Integrated Marketing Communication</option>
-                </optgroup>
-                <optgroup label="Agriculture">
-                  <option value="agriculture">Agriculture</option>
-                  <option value="agronomy">Agronomy</option>
-                  <option value="animal_science">Animal Science</option>
-                  <option value="soil_science">Soil Science</option>
-                  <option value="agricultural_economics">Agricultural Economics</option>
-                  <option value="crop_science">Crop Science</option>
-                </optgroup>
-                <optgroup label="Architecture &amp; Design">
-                  <option value="architecture">Architecture</option>
-                  <option value="environmental_design">Environmental Design</option>
-                  <option value="urban_regional_planning">Urban &amp; Regional Planning</option>
-                  <option value="building_technology">Building Technology</option>
-                </optgroup>
-                <optgroup label="Biology &amp; Life Sciences">
-                  <option value="biology">Biology</option>
-                  <option value="botany">Botany</option>
-                  <option value="zoology">Zoology</option>
-                  <option value="genetics">Genetics</option>
-                  <option value="ecology">Ecology</option>
-                  <option value="molecular_biology">Molecular Biology</option>
-                </optgroup>
-                <optgroup label="Computer Science &amp; IT">
-                  <option value="computer_science">Computer Science</option>
-                  <option value="software_engineering">Software Engineering</option>
-                  <option value="information_systems">Information Systems</option>
-                  <option value="artificial_intelligence">Artificial Intelligence</option>
-                </optgroup>
-                <optgroup label="Cyber Security">
-                  <option value="cyber_security">Cyber Security</option>
-                  <option value="information_security">Information Security</option>
-                  <option value="digital_forensics">Digital Forensics</option>
-                </optgroup>
-                <optgroup label="Data Science &amp; Statistics">
-                  <option value="data_science">Data Science</option>
-                  <option value="statistics">Statistics</option>
-                  <option value="machine_learning">Machine Learning</option>
-                </optgroup>
-                <optgroup label="Economics">
-                  <option value="economics">Economics</option>
-                  <option value="development_economics">Development Economics</option>
-                  <option value="econometrics">Econometrics</option>
-                  <option value="financial_economics">Financial Economics</option>
-                </optgroup>
-                <optgroup label="Mathematics">
-                  <option value="mathematics">Mathematics</option>
-                  <option value="applied_mathematics">Applied Mathematics</option>
-                  <option value="pure_mathematics">Pure Mathematics</option>
-                  <option value="mathematical_physics">Mathematical Physics</option>
-                </optgroup>
-                <optgroup label="Physics">
-                  <option value="physics">Physics</option>
-                  <option value="applied_physics">Applied Physics</option>
-                  <option value="nuclear_physics">Nuclear Physics</option>
-                  <option value="electronics">Electronics</option>
-                </optgroup>
-                <optgroup label="Chemistry">
-                  <option value="chemistry">Chemistry</option>
-                  <option value="industrial_chemistry">Industrial Chemistry</option>
-                  <option value="biochemistry">Biochemistry</option>
-                  <option value="materials_science">Materials Science</option>
-                </optgroup>
-                <optgroup label="Microbiology &amp; Biotechnology">
-                  <option value="microbiology">Microbiology</option>
-                  <option value="biotechnology">Biotechnology</option>
-                  <option value="virology">Virology</option>
-                  <option value="immunology">Immunology</option>
-                </optgroup>
-                <optgroup label="English &amp; Linguistics">
-                  <option value="english">English</option>
-                  <option value="linguistics">Linguistics</option>
-                  <option value="literature">Literature</option>
-                  <option value="applied_linguistics">Applied Linguistics</option>
-                </optgroup>
-                <optgroup label="Philosophy &amp; Religion">
-                  <option value="philosophy">Philosophy</option>
-                  <option value="ethics">Ethics</option>
-                  <option value="logic">Logic</option>
-                  <option value="religious_studies">Religious Studies</option>
-                </optgroup>
-                <optgroup label="Library &amp; Information Science">
-                  <option value="library_information_science">Library &amp; Information Science</option>
-                  <option value="information_science">Information Science</option>
-                  <option value="knowledge_management">Knowledge Management</option>
-                  <option value="archival_studies">Archival Studies</option>
-                  <option value="records_management">Records Management</option>
-                  <option value="digital_libraries">Digital Libraries</option>
-                </optgroup>
-              </select>
+            <div class="apply-field academic-only" id="field-programme">
+              <label for="apply-programme-display">Department of Study<span class="req-star">*</span></label>
+              <input type="text" id="apply-programme-display" placeholder="Selected from Step 1" readonly style="background-color: #f5f5f5; cursor: not-allowed;" />
+              <input type="hidden" id="apply-programme" />
             </div>
 
             <!-- ── PhD Degree Field (shown only when PhD + programme selected) ── -->
-            <div class="apply-field" id="field-phd-degree" style="display:none;">
+            <div class="apply-field academic-only" id="field-phd-degree" style="display:none;">
               <label for="apply-phd-degree">Field of Study (PhD)<span class="req-star">*</span></label>
               <select id="apply-phd-degree" onchange="onPhdDegreeFieldChange()">
                 <option value="" disabled selected hidden>Select PhD degree field</option>

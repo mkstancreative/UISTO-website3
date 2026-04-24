@@ -546,9 +546,6 @@ function _validateStep1() {
     if (age < 18) {
       _showErr("apply-dob", "Applicant must be at least 18 years old.");
       errs.push("apply-dob");
-    } else if (age > 65) {
-      _showErr("apply-dob", "Applicant must not be older than 65 years.");
-      errs.push("apply-dob");
     }
   }
   _req("apply-phone", "Phone number", errs);
@@ -557,18 +554,11 @@ function _validateStep1() {
   _req("apply-lga", "LGA", errs);
   _req("apply-gender", "Gender", errs);
   _req("apply-marital", "Marital Status", errs);
-  _req("apply-nin", "National Identification Number (NIN)", errs);
   _req("apply-address", "Home address", errs);
   const em = document.getElementById("apply-email");
   if (em?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)) {
     _showErr("apply-email", "Enter a valid email address.");
     errs.push("apply-email");
-  }
-  // NIN must be exactly 11 digits
-  const ninEl = document.getElementById("apply-nin");
-  if (ninEl?.value && !/^\d{11}$/.test(ninEl.value.trim())) {
-    _showErr("apply-nin", "NIN must be exactly 11 digits.");
-    errs.push("apply-nin");
   }
   // Academic-only: Department is on Step 1 — validate it here
   if (currentRoleType === "academic") {
@@ -588,12 +578,12 @@ function _validateStep2() {
   _req("apply-degree-type", "Degree type", errs);
   _req("apply-institution", "Institution", errs);
 
-  // Programme & PhD field — required for ALL applicants
-  _req("apply-programme", "Programme", errs);
-  // PhD degree field required for all when PhD is selected
-  const degType = document.getElementById("apply-degree-type")?.value;
-  if (degType === "phd") {
-    _req("apply-phd-degree", "PhD Degree Field", errs);
+  if (isAcademic) {
+    _req("apply-programme", "Department of Study", errs);
+    const degType = document.getElementById("apply-degree-type")?.value;
+    if (degType === "phd") {
+      _req("apply-phd-degree", "PhD Degree Field", errs);
+    }
   }
 
   // Referee required fields
@@ -709,7 +699,6 @@ async function submitApplication(e) {
     dateOfBirth: document.getElementById("apply-dob").value,
     gender: document.getElementById("apply-gender")?.value,
     maritalStatus: document.getElementById("apply-marital")?.value,
-    nin: document.getElementById("apply-nin")?.value.trim() || "",
   };
 
   /* ── qualifications ── */
@@ -945,14 +934,13 @@ function _showSuccess() {
    INIT
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", () => {
-  // Set DOB age limits dynamically (18–65 years)
+  // Set DOB age limits dynamically (18 years and above)
   const dobInput = document.getElementById("apply-dob");
-  if (dobInput) {
-    const today = new Date();
+  const today = new Date();
+  if (dobInput && !isNaN(today)) {
     const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-    const minDate = new Date(today.getFullYear() - 65, today.getMonth(), today.getDate());
     dobInput.max = maxDate.toISOString().split("T")[0];
-    dobInput.min = minDate.toISOString().split("T")[0];
+    dobInput.removeAttribute("min");
   }
 
   loadNigerianStates();
@@ -1105,6 +1093,18 @@ const PHD_MAP = {
   "logistics_supply_chain":          { core: { value: "logistics_supply_chain", label: "Logistics / Supply Chain Management" }, related: [{ value: "business_administration", label: "Business Administration" }] },
   "office_information_management":   { core: { value: "office_information_management", label: "Office Management / Information Management" }, related: [{ value: "business_administration", label: "Business Administration" }, { value: "information_systems", label: "Information Systems" }] },
 };
+
+function onDepartmentChange() {
+  const deptSelect = document.getElementById("apply-department");
+  const progHidden = document.getElementById("apply-programme");
+  const progDisplay = document.getElementById("apply-programme-display");
+  if (deptSelect) {
+    const selectedText = deptSelect.options[deptSelect.selectedIndex]?.text || "";
+    if (progHidden) progHidden.value = deptSelect.value;
+    if (progDisplay) progDisplay.value = selectedText;
+    onProgrammeOrDegreeChange();
+  }
+}
 
 function onProgrammeOrDegreeChange() {
   const degType = document.getElementById("apply-degree-type")?.value;
