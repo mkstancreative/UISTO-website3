@@ -8,6 +8,7 @@ window.addEventListener("load", () => {
     if (modal) {
       modal.classList.add("active");
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     }
   }, 400);
 });
@@ -16,7 +17,8 @@ window.addEventListener("load", () => {
 function closeModal() {
   if (modal) {
     modal.classList.remove("active");
-    document.body.style.overflow = "auto";
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
   }
 }
 
