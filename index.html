@@ -59,55 +59,6 @@
   </head>
   <body>
     <div class="page-wrapper">
-     <div class="modal-backdrop" id="modal" >
-        <div class="modal-card">
-          <button class="modal-close" id="closeModal">&times;</button>
-
-          <div class="modal-image">
-            <img src="./assets/img/utme.jpg" alt="utme" />
-          </div>
-
-          <p>
-            <strong
-              >UNIVERSITY OF INNOVATION, SCIENCE AND TECHNOLOGY, OMUMA</strong
-            >
-          </p>
-
-          <p>
-            <strong
-              >2025/2026 POST-UTME/SUPPLEMENTARY ADMISSION EXERCISE</strong
-            >
-          </p>
-
-          <p><strong>APPLICATION FORM</strong></p>
-
-          <p>
-            The University of Innovation, Science and Technology, Omuma (UISTO),
-            Imo State, hereby invites suitably qualified candidates to apply for
-            Post-UTME/Supplementary admission into its NUC-approved
-            undergraduate programmes for the 2025/2026 Academic Session.
-          </p>
-          <p>
-            UISTO is a State University established to drive innovation,
-            science, technology, and industry-relevant skills through a
-            technology-driven and practice-oriented academic model.
-          </p>
-            <a href="https://uisto.edu.ng/admission-list" 
-            style="display: block; text-align: center; margin: 40px 0;">
-            Click Here to view Admission List
-            </a>
-
-
-          <div class="modal-actions">
-            <a
-              class="btn-primary"
-              href="https://uisto.edu.ng/news-details.html?id=69452cf9effafa3a02bb6c02"
-              >Explore</a
-            >
-            <button class="btn-secondary" id="closeBtn">Close</button>
-          </div>
-        </div>
-      </div>
       <header class="section-header"></header>
       <main class="main-wrapper">
         <section class="section-hero">
@@ -1449,25 +1400,64 @@
         </div>
       </main>
       <footer class="section-footer"></footer>
-      <!--      <div-->
-      <!--  style="-->
-      <!--    -webkit-transform: translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0)-->
-      <!--      rotateY(0) rotateZ(0) skew(0, 0);-->
-      <!--    -moz-transform: translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0)-->
-      <!--      rotateY(0) rotateZ(0) skew(0, 0);-->
-      <!--    -ms-transform: translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0)-->
-      <!--      rotateY(0) rotateZ(0) skew(0, 0);-->
-      <!--    transform: translate3d(0, 0%, 0) scale3d(1, 1, 1) rotateX(0)-->
-      <!--      rotateY(0) rotateZ(0) skew(0, 0);-->
-      <!--  "-->
-      <!--  class="page-loader"-->
-      <!-->-->
-      <!--  <div class="page-loader-text-block">UISTO</div>-->
-      <!--  <div class="loder-block">-->
-      <!--    <div style="width: 0%" class="loader-progress-block"></div>-->
-      <!--  </div>-->
-      <!--</div>-->
+      
+      <!-- NEWS ANNOUNCEMENT MODAL -->
 
+      <div id="modal" class="uisto-news-modal">
+        <div class="uisto-modal-content">
+          <div class="uisto-modal-header">
+            <h3>ANNOUNCEMENT</h3>
+            <p>Career Opportunities</p>
+            <button id="closeModal" class="uisto-modal-close-abs" aria-label="Close modal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="uisto-modal-body">
+            <h4>
+              UISTO ADVERTISEMENT FOR ACADEMIC AND NON-TEACHING STAFF POSITIONS
+            </h4>
+            <p>
+              The University of Innovation, Science and Technology, Omuma (UISTO) invites applications from suitably qualified professionals to join its academic and administrative teams. Be part of a forward-thinking institution committed to shaping Nigeria’s future.
+            </p>
+
+            <div class="uisto-req-box">
+              <p>Applicants are required to complete the online application form and upload the following three (3) documents:</p>
+              <ul class="uisto-req-list">
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span>Application Letter</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span>Curriculum Vitae (CV)</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span>Supporting Documents <em style="color: #64748b; font-size: 0.85rem; font-style: normal;">(combined into a single PDF file)</em></span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="uisto-notice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <p>
+                <strong>Notice:</strong> Applicants are advised to have these documents prepared before proceeding with the online application.
+              </p>
+            </div>
+
+            <div class="uisto-modal-actions">
+              <a href="https://uisto.edu.ng/career" class="uisto-btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                Apply via UISTO Recruitment Portal
+              </a>
+              <a href="https://drive.google.com/file/d/124WGR6Ef2Df8UF31QLd92wnb6apqfu0u/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="uisto-btn-secondary">
+                View further information / details
+              </a>
+              <button id="closeBtn" class="uisto-btn-secondary" style="border: none; background: none; color: #64748b; margin-top: 4px; font-weight: 500;">Maybe Later</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="./assets/js/news.js" defer></script>
