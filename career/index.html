@@ -9,10 +9,10 @@
   </title>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    setRoleType('academic');
-  });
-</script>
+    document.addEventListener("DOMContentLoaded", () => {
+      setRoleType('academic');
+    });
+  </script>
   <meta
     content="Learn about The University of Innovation, Science and Technology, Omuma (UISTO)’s mission, vision, and commitment to academic excellence and student success."
     name="description" />
@@ -60,79 +60,191 @@
     rel="apple-touch-icon" />
   <link rel="stylesheet" href="../assets/css/career.css" />
   <style>
-    .academic-only.hidden { display: none !important; }
-    .non-academic-only.hidden { display: none !important; }
+    .academic-only.hidden {
+      display: none !important;
+    }
+
+    .non-academic-only.hidden {
+      display: none !important;
+    }
 
     /* ── Referee 2 toggle ──────────────────────────────── */
-    #referee2-wrap { display: none; grid-column: 1 / -1; }
-    #add-referee2-btn, #add-referee3-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: none; border: 1.5px dashed #c8d4e0; border-radius: 8px;
-      color: #1e3a5f; font-size: 12px; font-weight: 600;
-      padding: 6px 14px; cursor: pointer; margin: 4px 0 8px;
+    #referee2-wrap {
+      display: none;
+      grid-column: 1 / -1;
+    }
+
+    #add-referee2-btn,
+    #add-referee3-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1.5px dashed #c8d4e0;
+      border-radius: 8px;
+      color: #1e3a5f;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      cursor: pointer;
+      margin: 4px 0 8px;
       transition: border-color .18s, background .18s;
     }
-    #add-referee2-btn:hover, #add-referee3-btn:hover { border-color: #1e3a5f; background: #f0f4fa; }
+
+    #add-referee2-btn:hover,
+    #add-referee3-btn:hover {
+      border-color: #1e3a5f;
+      background: #f0f4fa;
+    }
+
     .referee-divider {
       grid-column: 1 / -1;
-      font-weight: 600; color: #1e3a5f; font-size: 12px;
-      text-transform: uppercase; letter-spacing: .05em;
-      border-top: 1px dashed #dde6f0; padding-top: 10px; margin: 4px 0 2px;
+      font-weight: 600;
+      color: #1e3a5f;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-top: 1px dashed #dde6f0;
+      padding-top: 10px;
+      margin: 4px 0 2px;
     }
 
     /* ── Sub-Cadre Picker ────────────────────────────────── */
-    #subcadre-picker { display: none; margin-bottom: 6px; }
-    .subcadre-label {
-      font-size: 11.5px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .06em; color: #1e3a5f; margin: 0 0 10px;
+    #subcadre-picker {
+      display: none;
+      margin-bottom: 6px;
     }
+
+    .subcadre-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #1e3a5f;
+      margin: 0 0 10px;
+    }
+
     .subcadre-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 8px;
     }
+
     .subcadre-card {
-      display: flex; flex-direction: column; align-items: flex-start;
-      gap: 2px; background: #f4f7fb; border: 1.5px solid #dde6f0;
-      border-radius: 8px; padding: 8px 10px 7px; cursor: pointer;
-      text-align: left; width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      background: #f4f7fb;
+      border: 1.5px solid #dde6f0;
+      border-radius: 8px;
+      padding: 8px 10px 7px;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
       transition: border-color .18s, background .18s, transform .15s, box-shadow .18s;
     }
+
     .subcadre-card:hover {
-      border-color: #1e3a5f; background: #eaf0f8;
-      transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30,58,95,.1);
+      border-color: #1e3a5f;
+      background: #eaf0f8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 58, 95, .1);
     }
+
     .subcadre-card.active {
-      border-color: #c9a84c; background: #fdf8ee;
-      box-shadow: 0 0 0 3px rgba(201,168,76,.15);
+      border-color: #c9a84c;
+      background: #fdf8ee;
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, .15);
     }
-    .subcadre-card-icon { color: #1e3a5f; margin-bottom: 1px; }
-    .subcadre-card-icon svg { width: 16px; height: 16px; }
-    .subcadre-card-name  { font-size: 11.5px; font-weight: 700; color: #1e3a5f; line-height: 1.3; }
-    .subcadre-card-count { font-size: 10px; color: #6b7c93; }
-    .subcadre-card-arrow { color: #c9a84c; margin-top: auto; align-self: flex-end; }
-    .subcadre-card-arrow svg { width: 11px; height: 11px; }
+
+    .subcadre-card-icon {
+      color: #1e3a5f;
+      margin-bottom: 1px;
+    }
+
+    .subcadre-card-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .subcadre-card-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1e3a5f;
+      line-height: 1.3;
+    }
+
+    .subcadre-card-count {
+      font-size: 10px;
+      color: #6b7c93;
+    }
+
+    .subcadre-card-arrow {
+      color: #c9a84c;
+      margin-top: auto;
+      align-self: flex-end;
+    }
+
+    .subcadre-card-arrow svg {
+      width: 11px;
+      height: 11px;
+    }
+
     .subcadre-loading {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px; color: #6b7c93; padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #6b7c93;
+      padding: 6px 0;
     }
+
     .subcadre-spinner {
-      display: inline-block; width: 18px; height: 18px; flex-shrink: 0;
-      border: 2.5px solid #c8d4e0; border-top-color: #1e3a5f;
-      border-radius: 50%; animation: spin .7s linear infinite;
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      border: 2.5px solid #c8d4e0;
+      border-top-color: #1e3a5f;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .subcadre-empty { font-size: 13px; color: #6b7c93; padding: 6px 0; margin: 0; }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .subcadre-empty {
+      font-size: 13px;
+      color: #6b7c93;
+      padding: 6px 0;
+      margin: 0;
+    }
 
     /* ── Back button ─────────────────────────────────────── */
     #subcadre-back-btn {
-      display: none; align-items: center; gap: 6px;
-      background: none; border: 1.5px solid #c8d4e0; border-radius: 8px;
-      color: #1e3a5f; font-size: 12px; font-weight: 600;
-      padding: 5px 12px; cursor: pointer; margin-bottom: 10px;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1.5px solid #c8d4e0;
+      border-radius: 8px;
+      color: #1e3a5f;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      cursor: pointer;
+      margin-bottom: 10px;
       transition: border-color .18s, background .18s;
     }
-    #subcadre-back-btn:hover { border-color: #1e3a5f; background: #f0f4fa; }
+
+    #subcadre-back-btn:hover {
+      border-color: #1e3a5f;
+      background: #f0f4fa;
+    }
   </style>
 </head>
 
@@ -169,19 +281,65 @@
           <!-- LEFT: Text & CTA -->
           <div class="uisto-career-content">
             <span class="uisto-career-chip">Now Recruiting</span>
-            <h2 class="uisto-career-h2">Build Your Future at UISTO</h2>
-            <p class="uisto-career-p">
-              The University of Innovation, Science and Technology, Omuma invites applications
-              from suitably qualified professionals to join our academic and administrative teams.
-              Be part of a forward-thinking institution shaping Nigeria's future.
-            </p>
+            <h2 class="uisto-career-h2">Career Opportunities</h2>
+            <div style="background: linear-gradient(145deg, #ffffff, #f9fbfd); border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #c9a84c; box-shadow: 0 4px 12px rgba(30, 58, 95, 0.05);">
+              <p class="uisto-career-p" style="font-size: 1.05rem; color: #1e3a5f; margin-bottom: 20px; line-height: 1.6;">
+                <strong>The University of Innovation, Science and Technology, Omuma (UISTO)</strong> invites applications from suitably qualified professionals to join its academic and administrative teams. Be part of a forward-thinking institution committed to shaping Nigeria’s future.
+              </p>
+              
+              <div style="background-color: #f4f7fb; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                <p style="font-weight: 700; color: #1e3a5f; margin-bottom: 12px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  Required Documents
+                </p>
+                <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 12px;">
+                  Applicants are required to complete the online application form and upload the following three (3) documents:
+                </p>
+                <ul style="margin: 0; padding-left: 8px; list-style: none;">
+                  <li style="margin-bottom: 8px; display: flex; align-items: flex-start; color: #2d3748; font-weight: 500;">
+                    <svg style="width: 18px; height: 18px; margin-right: 12px; margin-top: 2px; color: #c9a84c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Application Letter</span>
+                  </li>
+                  <li style="margin-bottom: 8px; display: flex; align-items: flex-start; color: #2d3748; font-weight: 500;">
+                    <svg style="width: 18px; height: 18px; margin-right: 12px; margin-top: 2px; color: #c9a84c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Curriculum Vitae (CV)</span>
+                  </li>
+                  <li style="display: flex; align-items: flex-start; color: #2d3748; font-weight: 500;">
+                    <svg style="width: 18px; height: 18px; margin-right: 12px; margin-top: 2px; color: #c9a84c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Supporting Documents <span style="color: #718096; font-weight: 400; font-size: 0.85rem;">(combined into a single PDF file)</span></span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div style="display: flex; align-items: center; background: #fffcf5; padding: 12px 16px; border-radius: 6px; border: 1px dashed #c9a84c; margin-bottom: 20px;">
+                <svg style="width: 20px; height: 20px; color: #c9a84c; margin-right: 12px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <p style="margin: 0; font-size: 0.9rem; color: #1e3a5f; font-weight: 500;">
+                  Applicants are advised to have these documents prepared before proceeding with the online application.
+                </p>
+              </div>
+
+              <div style="margin-top: 8px;">
+                <p style="margin: 0 0 12px 0; font-size: 0.9rem; color: #4a5568;">
+                  For further information, check the national dailies or:
+                </p>
+                <a href="https://drive.google.com/file/d/124WGR6Ef2Df8UF31QLd92wnb6apqfu0u/view?usp=sharing" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; background-color: #1e3a5f; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 0.9rem; transition: inset 0.2s ease; box-shadow: 0 2px 4px rgba(30,58,95,0.2);">
+                  <svg style="width: 16px; height: 16px; margin-right: 8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  View Details Document
+                </a>
+              </div>
+            </div>
+
             <div class="uisto-career-badges">
               <div class="uisto-career-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#c9a84c"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#c9a84c" />
+                </svg>
                 Omuma, Imo State
               </div>
               <div class="uisto-career-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#c9a84c" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="#c9a84c" stroke-width="2" />
+                  <path d="M12 6v6l4 2" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" />
+                </svg>
                 Closing: <strong>2 weeks from publication</strong>
               </div>
             </div>
@@ -189,13 +347,14 @@
               <button class="uisto-apply-trigger" id="career-apply-btn" onclick="openApplyModal()">
                 Apply Now
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
                 </svg>
               </button>
               <button class="uisto-status-trigger" id="check-status-btn" onclick="openStatusModal()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-                  <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                  <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                 </svg>
                 Check Application Status
               </button>
@@ -206,7 +365,11 @@
           <div class="uisto-career-positions">
             <div class="uisto-pos-card">
               <div class="uisto-pos-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 9l10 6 10-6-10-6z" stroke="#1e3a5f" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 6 10-6M2 13l10 6 10-6" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3L2 9l10 6 10-6-10-6z" stroke="#1e3a5f" stroke-width="2" stroke-linejoin="round" />
+                  <path d="M2 17l10 6 10-6M2 13l10 6 10-6" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
               </div>
               <h4>Academic Positions</h4>
               <p>Lecturers, Senior Lecturers, Readers, and Professors across all faculties and departments.</p>
@@ -214,7 +377,10 @@
             </div>
             <div class="uisto-pos-card">
               <div class="uisto-pos-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#1e3a5f" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#1e3a5f" stroke-width="2"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <rect x="2" y="7" width="20" height="14" rx="2" stroke="#1e3a5f" stroke-width="2" />
+                  <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#1e3a5f" stroke-width="2" />
+                </svg>
               </div>
               <h4>Non-Teaching Positions</h4>
               <p>Administrative, technical, library, legal, and support staff roles across all units.</p>
@@ -297,8 +463,8 @@
           </div>
           <button type="button" class="status-check-btn" id="status-check-btn" onclick="checkApplicationStatus()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
             </svg>
             Check Status
           </button>
@@ -345,14 +511,21 @@
             <p class="role-selector-lbl">I am applying for:</p>
             <div class="role-selector-tabs" role="group" aria-label="Position type">
               <button type="button" class="role-tab active" id="role-tab-academic" onclick="setRoleType('academic')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 9l10 6 10-6-10-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 6 10-6M2 13l10 6 10-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3L2 9l10 6 10-6-10-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                  <path d="M2 17l10 6 10-6M2 13l10 6 10-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
                 <div class="role-tab-text">
                   <span class="role-tab-name">Academic Staff</span>
                   <small class="role-tab-sub">Lecturers, Professors &amp; Researchers</small>
                 </div>
               </button>
               <button type="button" class="role-tab" id="role-tab-non-academic" onclick="setRoleType('non-academic')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="2"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+                  <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="2" />
+                </svg>
                 <div class="role-tab-text">
                   <span class="role-tab-name">Non-Teaching Staff</span>
                   <small class="role-tab-sub">Administrative &amp; Technical Staff</small>
@@ -376,8 +549,8 @@
               <!-- Back to categories (Non-Academic only) -->
               <button type="button" id="subcadre-back-btn" onclick="backToSubCadres()">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                  <path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.8"
-                    stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
                 </svg>
                 Back:&nbsp;<span class="back-btn-label">categories</span>
               </button>
@@ -450,7 +623,7 @@
             </div>
           </div><!-- /.job-selector-wrap -->
 
-          
+
           <div class="apply-form-grid">
 
             <div class="apply-field">
@@ -474,7 +647,8 @@
             <div class="apply-field">
               <label for="apply-dob">Date of Birth <span class="req-star">*</span></label>
               <input type="date" id="apply-dob" name="date_of_birth" id-dob-min-max />
-              <span class="apply-field-hint" style="font-size:11px;color:#6b7c93;margin-top:2px;">Applicant must be 18 years and above.</span>
+              <span class="apply-field-hint" style="font-size:11px;color:#6b7c93;margin-top:2px;">Applicant must be 18
+                years and above.</span>
             </div>
 
             <div class="apply-field">
@@ -595,7 +769,8 @@
 
             <div class="apply-field academic-only" id="field-programme">
               <label for="apply-programme-display">Department of Study<span class="req-star">*</span></label>
-              <input type="text" id="apply-programme-display" placeholder="Selected from Step 1" readonly style="background-color: #f5f5f5; cursor: not-allowed;" />
+              <input type="text" id="apply-programme-display" placeholder="Selected from Step 1" readonly
+                style="background-color: #f5f5f5; cursor: not-allowed;" />
               <input type="hidden" id="apply-programme" />
             </div>
 
@@ -605,10 +780,12 @@
               <select id="apply-phd-degree" onchange="onPhdDegreeFieldChange()">
                 <option value="" disabled selected hidden>Select PhD degree field</option>
               </select>
-              <span class="apply-field-hint" style="font-size:11px;color:#6b7c93;margin-top:2px;">Select the specific field your PhD was/will be awarded in.</span>
+              <span class="apply-field-hint" style="font-size:11px;color:#6b7c93;margin-top:2px;">Select the specific
+                field your PhD was/will be awarded in.</span>
             </div>
 
-            <div class="apply-field apply-field--full" style="flex-direction:row;align-items:center;gap:10px;margin-top:8px;">
+            <div class="apply-field apply-field--full"
+              style="flex-direction:row;align-items:center;gap:10px;margin-top:8px;">
               <input type="checkbox" id="apply-nysc" style="width:18px;height:18px;margin:0;cursor:pointer" />
               <label for="apply-nysc" style="margin:0;cursor:pointer">NYSC Completed?</label>
             </div>
@@ -630,7 +807,8 @@
               <input type="number" id="apply-industry-years" placeholder="e.g. 2" min="0" />
             </div>
             <div class="apply-field non-academic-only hidden" id="field-post-qual-years">
-              <label for="apply-post-qual-years">Post Qualification Working Experience (Years) <span class="req-star">*</span></label>
+              <label for="apply-post-qual-years">Post Qualification Working Experience (Years) <span
+                  class="req-star">*</span></label>
               <input type="number" id="apply-post-qual-years" placeholder="e.g. 5" min="0" />
             </div>
             <div class="apply-field academic-only" id="field-publications">
@@ -643,13 +821,13 @@
               Professional Info</p>
 
             <div class="apply-field apply-field--full" style="flex-direction:row;align-items:center;gap:10px">
-              <input type="checkbox" id="apply-ict-proficiency"
-                style="width:18px;height:18px;margin:0;cursor:pointer"
+              <input type="checkbox" id="apply-ict-proficiency" style="width:18px;height:18px;margin:0;cursor:pointer"
                 onchange="toggleIctFields(this)" />
               <label for="apply-ict-proficiency" style="margin:0;cursor:pointer">ICT Proficient</label>
             </div>
             <!-- Hidden until ICT checkbox is checked -->
-            <div class="apply-field ict-extra" id="ict-fields-wrap" style="display:none;grid-column:1/-1;display:none;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="apply-field ict-extra" id="ict-fields-wrap"
+              style="display:none;grid-column:1/-1;display:none;grid-template-columns:1fr 1fr;gap:16px;">
               <div class="apply-field">
                 <label for="apply-computer-skills">Computer Skills <small>(comma-separated)</small></label>
                 <input type="text" id="apply-computer-skills" placeholder="e.g. MS Word, Excel, PowerPoint" />
@@ -723,7 +901,8 @@
                   stroke-linejoin="round" />
                 <rect x="3" y="3" width="18" height="18" rx="4" stroke="#c8d4e0" stroke-width="1.2" />
               </svg>
-              <span class="file-drop-text" id="apply-cover-label" data-default="Click to upload or drag &amp; drop">Click to
+              <span class="file-drop-text" id="apply-cover-label"
+                data-default="Click to upload or drag &amp; drop">Click to
                 upload or drag &amp; drop</span>
               <input type="file" id="apply-cover" name="cover_letter" accept=".pdf,.doc,.docx"
                 onchange="updateFileLabel('apply-cover','apply-cover-label')" />
@@ -739,7 +918,8 @@
                   stroke-linejoin="round" />
                 <rect x="3" y="3" width="18" height="18" rx="4" stroke="#c8d4e0" stroke-width="1.2" />
               </svg>
-              <span class="file-drop-text" id="apply-cv-label" data-default="Click to upload or drag &amp; drop">Click to
+              <span class="file-drop-text" id="apply-cv-label" data-default="Click to upload or drag &amp; drop">Click
+                to
                 upload or drag &amp; drop</span>
               <input type="file" id="apply-cv" name="cv" accept=".pdf,.doc,.docx"
                 onchange="updateFileLabel('apply-cv','apply-cv-label')" />
@@ -751,11 +931,14 @@
             <p class="apply-file-hint">All Supporting Documents should be compiled into one PDF file (Max 10 MB)</p>
             <label class="file-drop-zone" for="apply-docs">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="#1e3a5f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="#1e3a5f" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
                 <rect x="3" y="3" width="18" height="18" rx="4" stroke="#c8d4e0" stroke-width="1.2" />
               </svg>
-              <span class="file-drop-text" id="apply-docs-label" data-default="Click to upload a file">Click to upload a file</span>
-              <input type="file" id="apply-docs" name="supportingDocument" accept=".pdf,.doc,.docx,.jpg,.png" onchange="updateFileLabel('apply-docs','apply-docs-label')" />
+              <span class="file-drop-text" id="apply-docs-label" data-default="Click to upload a file">Click to upload a
+                file</span>
+              <input type="file" id="apply-docs" name="supportingDocument" accept=".pdf,.doc,.docx,.jpg,.png"
+                onchange="updateFileLabel('apply-docs','apply-docs-label')" />
             </label>
           </div>
 
