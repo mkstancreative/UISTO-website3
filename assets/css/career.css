@@ -88,7 +88,9 @@
   border-radius: 6px;
   padding: 1.25rem 1.5rem;
   cursor: pointer;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -341,7 +343,9 @@
   align-items: center;
   justify-content: center;
   z-index: 10;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .apply-close:hover {
@@ -478,7 +482,9 @@
   color: #1a2e42;
   background: #fafcff;
   outline: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
   box-sizing: border-box;
 }
 
@@ -540,7 +546,9 @@
   border-radius: 8px;
   padding: 24px 16px;
   cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
   background: #f8fafc;
 }
 
@@ -591,7 +599,9 @@
   border-radius: 6px;
   cursor: pointer;
   letter-spacing: 0.03em;
-  transition: background 0.18s ease, transform 0.15s ease;
+  transition:
+    background 0.18s ease,
+    transform 0.15s ease;
 }
 
 .apply-next-btn:hover,
@@ -644,6 +654,106 @@
   color: #78350f;
   margin: 0;
   line-height: 1.6;
+}
+
+/* ── Consent Checkbox ── */
+.apply-consent-wrap {
+  margin-bottom: 1rem;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1.5px solid #dde5ed;
+  border-radius: 8px;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.apply-consent-wrap.consent-error-active {
+  border-color: #e53e3e;
+  background: #fff5f5;
+}
+
+.apply-consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Hide the browser native checkbox */
+.apply-consent-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Custom checkmark box */
+.apply-consent-checkmark {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border: 2px solid #c8d4e0;
+  border-radius: 4px;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.apply-consent-label input[type="checkbox"]:checked + .apply-consent-checkmark {
+  background: #1e3a5f;
+  border-color: #1e3a5f;
+}
+
+.apply-consent-label
+  input[type="checkbox"]:checked
+  + .apply-consent-checkmark::after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #c9a84c;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+.apply-consent-checkmark:hover {
+  border-color: #1e3a5f;
+}
+
+.apply-consent-text {
+  font-family: "Inter", sans-serif;
+  font-size: 12.5px;
+  color: #3a5068;
+  line-height: 1.65;
+}
+
+.apply-consent-link {
+  color: #1e3a5f;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.apply-consent-link:hover {
+  color: #c9a84c;
+}
+
+.consent-error {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  color: #e53e3e;
+  margin-top: 8px;
+  padding-left: 30px;
 }
 
 /* ── Success State ── */
@@ -749,7 +859,7 @@
 }
 
 .uisto-career-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -80px;
   right: -80px;
@@ -782,7 +892,7 @@
   gap: 6px;
   background: #1e3a5f;
   color: #c9a84c;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -793,7 +903,7 @@
 }
 
 .uisto-career-h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: clamp(1.65rem, 3vw, 2.25rem);
   font-weight: 700;
   color: #1a2e42;
@@ -802,7 +912,7 @@
 }
 
 .uisto-career-p {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 15px;
   color: #4a6072;
   line-height: 1.85;
@@ -824,10 +934,10 @@
   border: 1px solid #dde5ed;
   border-radius: 999px;
   padding: 6px 14px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 12.5px;
   color: #3a5068;
-  box-shadow: 0 1px 4px rgba(30,58,95,0.06);
+  box-shadow: 0 1px 4px rgba(30, 58, 95, 0.06);
 }
 
 .uisto-career-badge strong {
@@ -842,14 +952,17 @@
   background: #c9a84c;
   color: #fff;
   border: none;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14.5px;
   font-weight: 700;
   padding: 15px 36px;
   border-radius: 8px;
   cursor: pointer;
   letter-spacing: 0.02em;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   width: fit-content;
   box-shadow: 0 8px 24px rgba(201, 168, 76, 0.35);
 }
@@ -875,7 +988,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: box-shadow 0.22s ease, transform 0.22s ease;
+  transition:
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
   position: relative;
 }
 
@@ -905,7 +1020,7 @@
 }
 
 .uisto-pos-card h4 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 15px;
   font-weight: 600;
   color: #1a2e42;
@@ -913,7 +1028,7 @@
 }
 
 .uisto-pos-card p {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   color: #64748b;
   line-height: 1.65;
@@ -924,7 +1039,7 @@
   display: inline-block;
   background: #e8f0f8;
   color: #1e3a5f;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -950,7 +1065,7 @@
 }
 
 .role-selector-lbl {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 11.5px;
   font-weight: 700;
   color: #1a2e42;
@@ -976,7 +1091,7 @@
   cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: #3a5068;
 }
 
@@ -1067,13 +1182,15 @@
   padding: 10px 14px;
   border: 2px solid #dde5ed;
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13.5px;
   color: #1a2e42;
   background: #fafcff;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
   box-sizing: border-box;
 }
 
@@ -1097,8 +1214,14 @@
 }
 
 @keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .job-preview-top {
@@ -1115,20 +1238,20 @@
 }
 
 .job-preview-title {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 13.5px;
   font-weight: 600;
   color: #1a2e42;
 }
 
 .job-preview-dept {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 11.5px;
   color: #5a6a7a;
 }
 
 .job-preview-badge {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1156,7 +1279,7 @@
 }
 
 .job-preview-meta span {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 11.5px;
   color: #3a5068;
 }
@@ -1174,7 +1297,7 @@
   border: 1px solid #1e3a5f;
   padding: 14px 28px;
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -1254,7 +1377,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Result Card */
@@ -1294,9 +1419,18 @@
   letter-spacing: 0.05em;
 }
 
-.status-pending { background: #fef3c7; color: #92400e; }
-.status-shortlisted { background: #dcfce7; color: #166534; }
-.status-rejected { background: #fee2e2; color: #991b1b; }
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+.status-shortlisted {
+  background: #dcfce7;
+  color: #166534;
+}
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
 .result-meta {
   display: flex;
@@ -1319,6 +1453,18 @@
   line-height: 1.5;
 }
 
-.result-msg-info { background: #eff6ff; color: #1e40af; border-left: 3px solid #3b82f6; }
-.result-msg-success { background: #f0fdf4; color: #15803d; border-left: 3px solid #22c55e; }
-.result-msg-error { background: #fef2f2; color: #b91c1c; border-left: 3px solid #ef4444; }
+.result-msg-info {
+  background: #eff6ff;
+  color: #1e40af;
+  border-left: 3px solid #3b82f6;
+}
+.result-msg-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border-left: 3px solid #22c55e;
+}
+.result-msg-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-left: 3px solid #ef4444;
+}

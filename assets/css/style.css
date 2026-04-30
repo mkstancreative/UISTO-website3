@@ -1382,3 +1382,44 @@
 .ql-align-justify {
   margin: 12px 0 !important;
 }
+
+/* PRIVACY POLICY PAGE STYLES */
+/* .page-section {
+  background-color: #f9fbfd;
+} */
+
+.rich-text-block h2 {
+  font-family: "Poppins", sans-serif;
+  color: #0b3a7a;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 600;
+  border-bottom: 2px solid #e0e7f8;
+  padding-bottom: 8px;
+}
+
+.rich-text-block p {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.rich-text-block ul {
+  margin-bottom: 30px;
+  padding-left: 20px;
+}
+
+.rich-text-block li {
+  font-family: "Inter", sans-serif;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.rich-text-block li strong {
+  color: #222;
+}

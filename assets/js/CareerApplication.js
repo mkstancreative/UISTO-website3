@@ -169,6 +169,13 @@ function openApplyModal() {
   // hide ICT detail fields until checkbox is checked
   const ictWrap = document.getElementById("ict-fields-wrap");
   if (ictWrap) ictWrap.style.display = "none";
+  // Reset consent checkbox state
+  const consentBox = document.getElementById("apply-consent");
+  if (consentBox) consentBox.checked = false;
+  const consentErr = document.getElementById("apply-consent-error");
+  if (consentErr) consentErr.style.display = "none";
+  const consentWrap = document.getElementById("apply-consent-wrap");
+  if (consentWrap) consentWrap.classList.remove("consent-error-active");
   _goto(1);
   clearAllErrors();
   resetFileLabels();
@@ -665,6 +672,21 @@ function _validateStep3() {
     showToast("CV / Resume is required.", "error");
     return false;
   }
+
+  // Consent checkbox validation
+  const consentBox = document.getElementById("apply-consent");
+  const consentErr = document.getElementById("apply-consent-error");
+  if (!consentBox || !consentBox.checked) {
+    if (consentErr) consentErr.style.display = "block";
+    const wrap = document.getElementById("apply-consent-wrap");
+    if (wrap) wrap.classList.add("consent-error-active");
+    showToast("You must agree to the Privacy Policy before submitting.", "warning");
+    return false;
+  }
+  if (consentErr) consentErr.style.display = "none";
+  const wrap = document.getElementById("apply-consent-wrap");
+  if (wrap) wrap.classList.remove("consent-error-active");
+
   return true;
 }
 

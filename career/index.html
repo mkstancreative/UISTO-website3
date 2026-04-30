@@ -961,6 +961,25 @@
               knowledge. False information will lead to disqualification.</p>
           </div>
 
+          <!-- ── Consent Checkbox ── -->
+          <div class="apply-consent-wrap" id="apply-consent-wrap">
+            <label class="apply-consent-label" for="apply-consent">
+              <input type="checkbox" id="apply-consent" name="consent" />
+              <span class="apply-consent-checkmark"></span>
+              <span class="apply-consent-text">
+                I have read and agree to the
+                <a href="../PrivacyPolicy.html" target="_blank" rel="noopener noreferrer" class="apply-consent-link">
+                  Privacy Policy
+                </a>
+                and consent to the collection and processing of my personal data for the purpose of this job application.
+                <span class="req-star">*</span>
+              </span>
+            </label>
+            <span class="field-error consent-error" id="apply-consent-error" style="display:none;">
+              You must agree to the Privacy Policy before submitting.
+            </span>
+          </div>
+
           <div class="apply-step-nav">
             <button type="button" class="apply-back-btn" onclick="goToStep2()">&#8592; Back</button>
             <button type="submit" class="apply-submit-btn">
