@@ -62,7 +62,6 @@ window.switchMode = function switchMode(mode) {
 
 /* ── Token from URL ──────────────────────────────────────── */
 function getToken() {
-
   const match = window.location.pathname.match(/\/referee\/([^/]+)/);
   return match ? match[1] : "";
 }
